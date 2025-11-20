@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Seahorse Interactive Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ArcGIS Styles (Dark Theme) -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/dark/main.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* User requested color */
+      --brand-blue: #0367a1; 
+      
+      /* Theme Variables */
+      --bg-main: #0367a1; /* Main background color requested */
+      --panel-bg: rgba(3, 103, 161, 0.95); /* Floating panel bg */
+      --panel-border: rgba(255, 255, 255, 0.2);
+      --text-main: #ffffff;
+      --text-muted: #e0f2fe; /* Lighter muted text for blue bg */
+      --accent-gold: #fbbf24;
+      --danger: #ef4444;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: var(--bg-main);
+      font-family: 'Inter', sans-serif; 
+      overflow: hidden;
+      color: var(--text-main);
+    }
+
+    /* --- Layout --- */
+    #viewDiv {
+      width: 100%; /* Full width for floating layout */
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    /* --- Floating Sidebar (Legend - Right) --- */
+    #legendSidebar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 340px;
+      height: auto; /* Auto height to expand/shrink */
+      max-height: calc(100% - 40px); /* Constrain to screen */
+      background-color: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* --- Detail Panel (Left - Overlay) --- */
+    #detailPanel {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 400px; 
+      height: calc(100% - 40px);
+      background-color: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      z-index: 20;
+      transform: translateX(-120%);
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    #detailPanel.active {
+      transform: translateX(0);
+    }
+
+    /* --- Detail Content --- */
+    .detail-header {
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--panel-border);
+      position: relative;
+      flex-shrink: 0;
+    }
+    
+    .detail-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0,0,0,0.2);
+      border: none;
+      color: white;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .detail-close:hover {
+      background: rgba(0,0,0,0.4);
+    }
+
+    .detail-content {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+
+    .detail-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 26px; 
+      font-weight: 700;
+      color: white;
+      margin: 0 0 6px 0;
+      line-height: 1.2;
+    }
+    
+    .detail-subtitle {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .species-image-container {
+        width: 100%;
+        height: 260px;
+        margin-top: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        background: rgba(0,0,0,0.4);
+        position: relative;
+        border: 1px solid var(--panel-border);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .species-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+    .species-image.loaded {
+        opacity: 1;
+    }
+    
+    .image-credit {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: rgba(0,0,0,0.7);
+        color: rgba(255,255,255,0.9);
+        font-size: 11px;
+        padding: 4px 8px;
+        border-top-left-radius: 6px;
+        max-width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        backdrop-filter: blur(2px);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 24px 0;
+    }
+    
+    .info-box {
+      background: rgba(255, 255, 255, 0.1); 
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    
+    .info-label {
+      font-size: 12px; 
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: block;
+    }
+    
+    .info-value {
+      font-size: 16px;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 28px 0 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .text-body {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .threat-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .threat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--text-main);
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .threat-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--danger);
+      border-radius: 50%;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    /* --- Chart Styles --- */
+    .chart-container { margin-top: 12px; }
+    .chart-row { display: flex; align-items: center; margin-bottom: 14px; font-size: 13px; }
+    .chart-label {
+        width: 110px; color: var(--text-muted); white-space: nowrap; overflow: hidden;
+        text-overflow: ellipsis; padding-right: 12px; text-align: right; flex-shrink: 0;
+    }
+    .chart-bar-wrapper { flex: 1; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; overflow: hidden; display: flex; }
+    .chart-bar { height: 100%; }
+    .chart-val { margin-left: 10px; width: 45px; color: var(--text-main); font-size: 12px; }
+    .legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 8px; }
+
+    /* --- Sidebar Header & Search --- */
+    .sidebar-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--panel-border);
+      background: rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--text-muted);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .search-icon::after {
+      content: '';
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+      width: 6px;
+      height: 2px;
+      background: var(--text-muted);
+      transform: rotate(45deg);
+    }
+
+    #legendSearch {
+      width: 100%;
+      padding: 12px 12px 12px 42px; 
+      background-color: rgba(0,0,0,0.3);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    #legendSearch::placeholder { color: rgba(255,255,255,0.5); }
+    #legendSearch:focus {
+      background-color: rgba(0,0,0,0.5);
+      border-color: white;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+    }
+
+    #legendItems {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 10px;
+    }
+    
+    /* --- Legend Item --- */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .legend-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .legend-item:hover .legend-label { color: white; }
+
+    .legend-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .collapse-toggle {
+      font-size: 14px; color: var(--text-muted); width: 14px; text-align: center;
+    }
+    .legend-label-container { display: flex; align-items: center; gap: 12px; flex: 1; }
+
+    .legend-symbol {
+      width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+
+    .legend-label {
+      font-size: 14px; 
+      line-height: 1.4; color: var(--text-muted);
+      word-break: break-word; transition: color 0.2s;
+    }
+    .legend-label i { font-style: italic; color: var(--text-main); font-weight: 500; }
+
+    /* --- Status Badge --- */
+    .status-badge {
+      display: inline-block; padding: 3px 7px; border-radius: 4px;
+      font-size: 10px; 
+      font-weight: 700; margin-right: 8px;
+      color: #0367a1; /* Dark blue text on badge for readability */
+      text-transform: uppercase;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .eye-icon {
+      margin-left: 10px; color: rgba(255,255,255,0.3);
+      transition: color 0.2s;
+      cursor: pointer;
+      display: flex; align-items: center;
+    }
+    .legend-item:hover .eye-icon { color: white; }
+    .eye-icon svg { width: 20px; height: 20px; }
+
+    /* --- Sublayers --- */
+    .sublayer-container {
+      margin-left: 16px; padding-left: 12px;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      display: none; margin-top: 2px;
+    }
+    .sublayer-container.expanded { display: block; }
+
+    /* --- Search Active State (Flatten List) --- */
+    #legendSidebar.search-active .sublayer-container {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      border-left: none !important;
+      display: block !important; /* Force show children matches via CSS */
+    }
+    #legendSidebar.search-active .collapse-toggle {
+      display: none;
+    }
+    #legendSidebar.search-active .legend-item {
+       margin-left: 0 !important;
+    }
+    
+    /* --- Loading --- */
+    .image-loader {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      color: rgba(255,255,255,0.5); font-size: 13px;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "@arcgis/core/": "https://aistudiocdn.com/@arcgis/core@^4.34.8/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+  
+  <!-- Legend Panel (Floating - Right) -->
+  <div id="legendSidebar">
+    <div class="sidebar-header">
+      <div class="search-wrapper">
+        <div class="search-icon"></div>
+        <input
+          type="text"
+          id="legendSearch"
+          placeholder="Search species, habitats, countries..."
+          autocomplete="off"
+        >
+      </div>
+    </div>
+    <div id="legendItems"></div>
+  </div>
+
+  <!-- Detail Panel (Left - Overlay) -->
+  <div id="detailPanel">
+    <div class="detail-header">
+      <button class="detail-close" id="closeDetail" title="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div id="detailHeaderContent"></div>
+    </div>
+    <div class="detail-content" id="detailBody"></div>
+  </div>
+
+  <script type="module">
+    import WebMap from "https://js.arcgis.com/4.33/@arcgis/core/WebMap.js";
+    import MapView from "https://js.arcgis.com/4.33/@arcgis/core/views/MapView.js";
+
+    // --- DATASETS ---
+    const catchData = [
+        { country: "Argentina", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Argentina", gear: "Diving", count: 1 },
+        { country: "Argentina", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Australia", gear: "Bottom trawls (nei)", count: 10 },
+        { country: "Australia", gear: "Diving", count: 3 },
+        { country: "Australia", gear: "Gear nei", count: 1 },
+        { country: "Azores Islands (Portugal)", gear: "Gear not known", count: 1 },
+        { country: "Bangladesh", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Bangladesh", gear: "Pushnets", count: 1 },
+        { country: "Bangladesh", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Bangladesh", gear: "Stationary uncovered pound nets", count: 1 },
+        { country: "Belgium", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Belgium", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Belgium", gear: "Traps (nei)", count: 1 },
+        { country: "Belgium", gear: "Gear not known", count: 1 },
+        { country: "Belize", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Belize", gear: "Diving", count: 1 },
+        { country: "Brazil", gear: "Bottom trawls (nei)", count: 14 },
+        { country: "Brazil", gear: "Diving", count: 5 },
+        { country: "Brazil", gear: "Gear nei", count: 4 },
+        { country: "Brazil", gear: "Beach seines", count: 3 },
+        { country: "Brazil", gear: "Cast nets", count: 3 },
+        { country: "Brazil", gear: "Gillnets and entangling nets (nei)", count: 2 },
+        { country: "Brazil", gear: "Set gillnets (anchored)", count: 2 },
+        { country: "Brazil", gear: "Barriers, fences, weirs, etc.", count: 2 },
+        { country: "Brazil", gear: "Gear not known", count: 2 },
+        { country: "Brazil", gear: "Seine nets (nei)", count: 1 },
+        { country: "Brazil", gear: "Pots", count: 1 },
+        { country: "Cambodia", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Cambodia", gear: "Gear nei", count: 1 },
+        { country: "Cambodia", gear: "Pushnets", count: 1 },
+        { country: "Cambodia", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Cambodia", gear: "Fyke nets", count: 1 },
+        { country: "Cambodia", gear: "Pots", count: 1 },
+        { country: "Cambodia", gear: "Traps (nei)", count: 1 },
+        { country: "Chile", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "China", gear: "Bottom trawls (nei)", count: 4 },
+        { country: "China", gear: "Gear not known", count: 2 },
+        { country: "China", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "China", gear: "Cast nets", count: 1 },
+        { country: "Costa Rica", gear: "Diving", count: 2 },
+        { country: "Costa Rica", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Costa Rica", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Croatia", gear: "Gear not known", count: 1 },
+        { country: "Ecuador", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Ecuador", gear: "Diving", count: 2 },
+        { country: "Ecuador", gear: "Beach seines", count: 1 },
+        { country: "Ecuador", gear: "Purse seines", count: 1 },
+        { country: "France", gear: "Bottom trawls (nei)", count: 3 },
+        { country: "France", gear: "Stationary uncovered pound nets", count: 1 },
+        { country: "Gambia", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Gambia", gear: "Diving", count: 1 },
+        { country: "Gambia", gear: "Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)", count: 1 },
+        { country: "Gambia", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Gambia", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "Gambia", gear: "Beach seines", count: 1 },
+        { country: "Gambia", gear: "Seine nets (nei)", count: 1 },
+        { country: "Gambia", gear: "Pots", count: 1 },
+        { country: "Gambia", gear: "Traps (nei)", count: 1 },
+        { country: "Gambia", gear: "Cast nets", count: 1 },
+        { country: "Gambia", gear: "Handlines and hand-operated pole-and-lines", count: 1 },
+        { country: "Germany", gear: "Traps (nei)", count: 3 },
+        { country: "Germany", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Greece", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Greece", gear: "Boat seines", count: 1 },
+        { country: "Guatemala", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Guatemala", gear: "Trammel nets", count: 1 },
+        { country: "Honduras", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Honduras", gear: "Trammel nets", count: 1 },
+        { country: "Honduras", gear: "Seine nets (nei)", count: 1 },
+        { country: "Hong Kong SAR", gear: "Gear not known", count: 1 },
+        { country: "India", gear: "Bottom trawls (nei)", count: 10 },
+        { country: "India", gear: "Diving", count: 5 },
+        { country: "India", gear: "Gear nei", count: 3 },
+        { country: "India", gear: "Gillnets and entangling nets (nei)", count: 3 },
+        { country: "India", gear: "Beach seines", count: 3 },
+        { country: "India", gear: "Seine nets (nei)", count: 2 },
+        { country: "India", gear: "Traps (nei)", count: 2 },
+        { country: "India", gear: "Surrounding nets (nei)", count: 2 },
+        { country: "India", gear: "Drift gillnets", count: 1 },
+        { country: "India", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "India", gear: "Trammel nets", count: 1 },
+        { country: "India", gear: "Barriers, fences, weirs, etc.", count: 1 },
+        { country: "India", gear: "Cast nets", count: 1 },
+        { country: "India", gear: "Falling gear (nei)", count: 1 },
+        { country: "India", gear: "Purse seines", count: 1 },
+        { country: "India", gear: "Hooks and lines (nei)", count: 1 },
+        { country: "Indonesia", gear: "Bottom trawls (nei)", count: 3 },
+        { country: "Indonesia", gear: "Diving", count: 3 },
+        { country: "Indonesia", gear: "Gear not known", count: 3 },
+        { country: "Indonesia", gear: "Gear nei", count: 2 },
+        { country: "Indonesia", gear: "Pushnets", count: 2 },
+        { country: "Indonesia", gear: "Beach seines", count: 2 },
+        { country: "Indonesia", gear: "Scoopnets", count: 1 },
+        { country: "Indonesia", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Indonesia", gear: "Barriers, fences, weirs, etc.", count: 1 },
+        { country: "Indonesia", gear: "Pots", count: 1 },
+        { country: "Indonesia", gear: "Cast nets", count: 1 },
+        { country: "Indonesia", gear: "Purse seines", count: 1 },
+        { country: "Indonesia", gear: "Lift nets (nei)", count: 1 },
+        { country: "Italy", gear: "Bottom trawls (nei)", count: 3 },
+        { country: "Italy", gear: "Gear nei", count: 3 },
+        { country: "Italy", gear: "Gear not known", count: 3 },
+        { country: "Italy", gear: "Beach seines", count: 2 },
+        { country: "Italy", gear: "Harpoons", count: 1 },
+        { country: "Italy", gear: "Trammel nets", count: 1 },
+        { country: "Italy", gear: "Pots", count: 1 },
+        { country: "Italy", gear: "Purse seines", count: 1 },
+        { country: "Japan", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Kenya", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Kenya", gear: "Diving", count: 1 },
+        { country: "Kenya", gear: "Seine nets (nei)", count: 1 },
+        { country: "Kenya", gear: "Cast nets", count: 1 },
+        { country: "Kenya", gear: "Purse seines", count: 1 },
+        { country: "Kuwait", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Malaysia", gear: "Bottom trawls (nei)", count: 10 },
+        { country: "Malaysia", gear: "Drift gillnets", count: 4 },
+        { country: "Malaysia", gear: "Gear nei", count: 3 },
+        { country: "Malaysia", gear: "Cast nets", count: 3 },
+        { country: "Malaysia", gear: "Purse seines", count: 3 },
+        { country: "Malaysia", gear: "Diving", count: 1 },
+        { country: "Malaysia", gear: "Pushnets", count: 1 },
+        { country: "Malaysia", gear: "Scoopnets", count: 1 },
+        { country: "Malaysia", gear: "Trammel nets", count: 1 },
+        { country: "Malaysia", gear: "Seine nets (nei)", count: 1 },
+        { country: "Malaysia", gear: "Barriers, fences, weirs, etc.", count: 1 },
+        { country: "Malaysia", gear: "Pots", count: 1 },
+        { country: "Malaysia", gear: "Stationary uncovered pound nets", count: 1 },
+        { country: "Malaysia", gear: "Stow nets", count: 1 },
+        { country: "Malaysia", gear: "Traps (nei)", count: 1 },
+        { country: "Malaysia", gear: "Hooks and lines (nei)", count: 1 },
+        { country: "Mexico", gear: "Bottom trawls (nei)", count: 4 },
+        { country: "Mexico", gear: "Diving", count: 3 },
+        { country: "Mexico", gear: "Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)", count: 1 },
+        { country: "Mexico", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Mexico", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "Mexico", gear: "Beach seines", count: 1 },
+        { country: "Mexico", gear: "Boat seines", count: 1 },
+        { country: "Mexico", gear: "Pots", count: 1 },
+        { country: "Mexico", gear: "Cast nets", count: 1 },
+        { country: "Mozambique", gear: "Beach seines", count: 1 },
+        { country: "Mozambique", gear: "Purse seines", count: 1 },
+        { country: "Netherlands", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "New Zealand", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "New Zealand", gear: "Longlines (nei)", count: 1 },
+        { country: "Nicaragua", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Nicaragua", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Nigeria", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Norway", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Norway", gear: "Pots", count: 1 },
+        { country: "Oman", gear: "Traps (nei)", count: 1 },
+        { country: "Pakistan", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Pakistan", gear: "Diving", count: 1 },
+        { country: "Pakistan", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Panama", gear: "Diving", count: 2 },
+        { country: "Panama", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Peru", gear: "Bottom trawls (nei)", count: 3 },
+        { country: "Peru", gear: "Diving", count: 3 },
+        { country: "Peru", gear: "Gillnets and entangling nets (nei)", count: 3 },
+        { country: "Peru", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "Peru", gear: "Trammel nets", count: 1 },
+        { country: "Peru", gear: "Purse seines", count: 1 },
+        { country: "Philippines", gear: "Diving", count: 10 },
+        { country: "Philippines", gear: "Bottom trawls (nei)", count: 5 },
+        { country: "Philippines", gear: "Gear nei", count: 5 },
+        { country: "Philippines", gear: "Pushnets", count: 4 },
+        { country: "Philippines", gear: "Beach seines", count: 2 },
+        { country: "Philippines", gear: "Seine nets (nei)", count: 2 },
+        { country: "Philippines", gear: "Barriers, fences, weirs, etc.", count: 2 },
+        { country: "Philippines", gear: "Pots", count: 2 },
+        { country: "Philippines", gear: "Drift gillnets", count: 1 },
+        { country: "Philippines", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Philippines", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "Philippines", gear: "Boat seines", count: 1 },
+        { country: "Philippines", gear: "Traps (nei)", count: 1 },
+        { country: "Philippines", gear: "Cover pots/Lantern nets", count: 1 },
+        { country: "Philippines", gear: "Gear not known", count: 1 },
+        { country: "Portugal", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Portugal", gear: "Beach seines", count: 2 },
+        { country: "Portugal", gear: "Pushnets", count: 1 },
+        { country: "Portugal", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Portugal", gear: "Trammel nets", count: 1 },
+        { country: "Portugal", gear: "Pots", count: 1 },
+        { country: "Portugal", gear: "Traps (nei)", count: 1 },
+        { country: "Senegal", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Senegal", gear: "Diving", count: 1 },
+        { country: "Senegal", gear: "Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)", count: 1 },
+        { country: "Senegal", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Senegal", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "Senegal", gear: "Beach seines", count: 1 },
+        { country: "Senegal", gear: "Seine nets (nei)", count: 1 },
+        { country: "Senegal", gear: "Pots", count: 1 },
+        { country: "Senegal", gear: "Traps (nei)", count: 1 },
+        { country: "Senegal", gear: "Cast nets", count: 1 },
+        { country: "Senegal", gear: "Handlines and hand-operated pole-and-lines", count: 1 },
+        { country: "South Korea", gear: "Seine nets (nei)", count: 1 },
+        { country: "South Korea", gear: "Purse seines", count: 1 },
+        { country: "South Korea", gear: "Gear not known", count: 1 },
+        { country: "Spain", gear: "Gear nei", count: 2 },
+        { country: "Spain", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Spain", gear: "Seine nets (nei)", count: 1 },
+        { country: "Spain", gear: "Gear not known", count: 1 },
+        { country: "Sri Lanka", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Sri Lanka", gear: "Gear nei", count: 1 },
+        { country: "Sri Lanka", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Sri Lanka", gear: "Fyke nets", count: 1 },
+        { country: "Sweden", gear: "Pots", count: 1 },
+        { country: "Taiwan", gear: "Bottom trawls (nei)", count: 1 },
+        { country: "Taiwan", gear: "Gear not known", count: 1 },
+        { country: "Tanzania", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "Tanzania", gear: "Gear nei", count: 2 },
+        { country: "Tanzania", gear: "Seine nets (nei)", count: 2 },
+        { country: "Tanzania", gear: "Purse seines", count: 2 },
+        { country: "Tanzania", gear: "Diving", count: 1 },
+        { country: "Tanzania", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Tanzania", gear: "Beach seines", count: 1 },
+        { country: "Tanzania", gear: "Pots", count: 1 },
+        { country: "Tanzania", gear: "Traps (nei)", count: 1 },
+        { country: "Tanzania", gear: "Cast nets", count: 1 },
+        { country: "Tanzania", gear: "Surrounding nets (nei)", count: 1 },
+        { country: "Thailand", gear: "Bottom trawls (nei)", count: 7 },
+        { country: "Thailand", gear: "Gillnets and entangling nets (nei)", count: 4 },
+        { country: "Thailand", gear: "Pushnets", count: 3 },
+        { country: "Thailand", gear: "Diving", count: 2 },
+        { country: "Thailand", gear: "Pots", count: 1 },
+        { country: "Thailand", gear: "Purse seines", count: 1 },
+        { country: "Tunisia", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "Tunisia", gear: "Dredges (nei)", count: 1 },
+        { country: "Turkey", gear: "Bottom trawls (nei)", count: 5 },
+        { country: "Turkey", gear: "Gillnets and entangling nets (nei)", count: 4 },
+        { country: "Turkey", gear: "Gear nei", count: 2 },
+        { country: "Turkey", gear: "Purse seines", count: 2 },
+        { country: "Turkey", gear: "Gear not known", count: 2 },
+        { country: "Turkey", gear: "Beach seines", count: 1 },
+        { country: "United Arab Emirates", gear: "Midwater trawls (nei)", count: 1 },
+        { country: "United Kingdom", gear: "Bottom trawls (nei)", count: 2 },
+        { country: "United Kingdom", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "United Kingdom", gear: "Pots", count: 1 },
+        { country: "United States", gear: "Bottom trawls (nei)", count: 5 },
+        { country: "United States", gear: "Beach seines", count: 2 },
+        { country: "United States", gear: "Gillnets and entangling nets (nei)", count: 1 },
+        { country: "United States", gear: "Gear not known", count: 1 },
+        { country: "Uruguay", gear: "Fyke nets", count: 1 },
+        { country: "Viet Nam", gear: "Bottom trawls (nei)", count: 9 },
+        { country: "Viet Nam", gear: "Diving", count: 6 },
+        { country: "Viet Nam", gear: "Electric fishing", count: 1 },
+        { country: "Viet Nam", gear: "Set gillnets (anchored)", count: 1 },
+        { country: "Viet Nam", gear: "Boat seines", count: 1 },
+        { country: "Viet Nam", gear: "Pots", count: 1 },
+        { country: "Viet Nam", gear: "Traps (nei)", count: 1 }
+    ];
+
+    const gearColors = [
+        "#3b82f6", "#06b6d4", "#14b8a6", "#84cc16", "#f59e0b", 
+        "#ef4444", "#8b5cf6", "#ec4899", "#6366f1", "#9ca3af"
+    ];
+
+    // --- CONFIG: MANUAL IMAGE OVERRIDES ---
+    const manualImageOverrides = {};
+
+    const webmap = new WebMap({
+      portalItem: { id: "8a36f0f1a97c4389ba1b3d086ba08150" }
+    });
+
+    await webmap.loadAll();
+
+    const view = new MapView({
+      container: "viewDiv",
+      map: webmap,
+      ui: { components: ["attribution", "zoom"] },
+      popup: {
+        autoOpenEnabled: false, 
+        defaultPopupTemplateEnabled: false 
+      }
+    });
+
+    await view.when();
+
+    // Configure UI
+    view.ui.move("zoom", "top-left");
+    view.constraints = { minZoom: 2, maxZoom: 12, snapToZoom: false, rotationEnabled: true };
+
+    // --- API: iNaturalist Image Fetcher ---
+    async function fetchSpeciesImage(scientificName) {
+        if (manualImageOverrides[scientificName]) {
+            return { url: manualImageOverrides[scientificName], attribution: "Image provided by user" };
+        }
+        try {
+            const url = `https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(scientificName)}&per_page=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+                const taxon = data.results[0];
+                if (taxon.default_photo) {
+                    const p = taxon.default_photo;
+                    const highResUrl = p.original_url || p.large_url || p.medium_url || p.url;
+                    let photographer = "Unknown";
+                    if (p.attribution) {
+                        photographer = p.attribution.replace(/^\(c\)\s*/i, '').split(',')[0].trim();
+                    }
+                    return {
+                        url: highResUrl,
+                        attribution: `${photographer} / iNaturalist`
+                    };
+                }
+            }
+            return null;
+        } catch (e) {
+            console.error("iNat API Error:", e);
+            return null;
+        }
+    }
+
+    // --- SEIZURE DATA ---
+    const seizureData = [
+      { c: "Viet Nam", exp: 243412.6, imp: 617992.1, tr: 80520.45 },
+      { c: "China", exp: 113723, imp: 1705997, tr: 27881.04 },
+      { c: "Hong Kong SAR", exp: 116349.1, imp: 523960.5, tr: 1028.535 },
+      { c: "India", exp: 221765.4, imp: 25118.11, tr: 92852.31 },
+      { c: "Philippines", exp: 215936.9, imp: 96394.46, tr: 21561.34 },
+      { c: "Peru", exp: 1885832, imp: 0, tr: 443494.1 },
+      { c: "Thailand", exp: 30271.61, imp: 24140.37, tr: 5204.461 },
+      { c: "Egypt", exp: 156245.1, imp: 18587.36, tr: 15241.64 },
+      { c: "Indonesia", exp: 113961.3, imp: 557.6208, tr: 0 },
+      { c: "Mozambique", exp: 39464.68, imp: 0, tr: 3345.725 },
+      { c: "Malaysia", exp: 316.4758, imp: 11152.42, tr: 7040 },
+      { c: "Mexico", exp: 17222.09, imp: 947, tr: 531 },
+      { c: "Nepal", exp: 15241.64, imp: 0, tr: 5204.461 },
+      { c: "UAE", exp: 0, imp: 22118.96, tr: 7806.691 },
+      { c: "Panama", exp: 0, imp: 20000, tr: 0 },
+      { c: "China (Macau)", exp: 0, imp: 19702.6, tr: 0 },
+      { c: "France", exp: 0, imp: 54, tr: 20952 },
+      { c: "Bolivia", exp: 0, imp: 0, tr: 23258.33 },
+      { c: "Germany", exp: 0, imp: 53, tr: 16248 },
+      { c: "Belgium", exp: 0, imp: 15, tr: 13551 },
+      { c: "Netherlands", exp: 0, imp: 0, tr: 6624.494 },
+      { c: "South Africa", exp: 496.6543, imp: 132, tr: 7434.944 }
+    ];
+
+    // --- SPECIES DATABASE ---
+    const speciesInfo = {
+      "Hippocampus abdominalis": { status: "LC", common: "Bigbelly seahorse" },
+      "Hippocampus algiricus": { status: "VU", common: "West African seahorse" },
+      "Hippocampus angustus": { status: "LC", common: "Narrow-bellied seahorse" },
+      "Hippocampus barbouri": { status: "VU", common: "Barbour's seahorse" },
+      "Hippocampus bargibanti": { status: "LC", common: "Bargibant's pygmy seahorse" },
+      "Hippocampus breviceps": { status: "LC", common: "Short-head seahorse" },
+      "Hippocampus camelopardalis": { status: "DD", common: "Giraffe seahorse" },
+      "Hippocampus capensis": { status: "EN", common: "Knysna seahorse" },
+      "Hippocampus casscsio": { status: "DD", common: "Beibu Bay seahorse" },
+      "Hippocampus colemani": { status: "DD", common: "Coleman's pygmy seahorse" },
+      "Hippocampus coronatus": { status: "VU", common: "Crowned seahorse" },
+      "Hippocampus dahli": { status: "LC", common: "Lowcrown seahorse" },
+      "Hippocampus debelius": { status: "NT", common: "Softcoral seahorse" },
+      "Hippocampus denise": { status: "LC", common: "Denise's pygmy seahorse" },
+      "Hippocampus comes": { status: "VU", common: "Tiger tail seahorse" },
+      "Hippocampus erectus": { status: "VU", common: "Lined seahorse" },
+      "Hippocampus fisheri": { status: "LC", common: "Fisher's seahorse" },
+      "Hippocampus guttulatus": { status: "DD", common: "Long-snouted seahorse" },
+      "Hippocampus haema": { status: "VU", common: "Korean seahorse" },
+      "Hippocampus hippocampus": { status: "DD", common: "Short-snouted seahorse"},
+      "Hippocampus histrix": { status: "VU", common: "Thorny seahorse"},
+      "Hippocampus ingens": { status: "VU", common: "Pacific seahorse"},
+      "Hippocampus japapigu": { status: "LC", common: "Japan pig pygmy seahorse"},
+      "Hippocampus jayakari": { status: "LC", common: "Jayakar's seahorse"},
+      "Hippocampus jugumus": { status: "DD", common: "Collared seahorse"},
+      "Hippocampus kelloggi": { status: "DD", common: "Great seahorse"},
+      "Hippocampus kuda": { status: "VU", common: "Spotted seahorse"},
+      "Hippocampus minotaur": { status: "DD", common: "Bullneck seahorse"},
+      "Hippocampus mohnikei": { status: "VU", common: "Japanese seahorse"},
+      "Hippocampus nalu": { status: "NT", common: "Sodwana pygmy seahorse"},
+      "Hippocampus paradoxus": { status: "DD", common: "Paradoxical seahorse"},
+      "Hippocampus patagonicus": { status: "VU", common: "Patagonian seahorse"},
+      "Hippocampus planifrons": { status: "LC", common: "Flatface seahorse"},
+      "Hippocampus pontohi": { status: "LC", common: "Pontoh's pgymy seahorse"},
+      "Hippocampus pusillus": { status: "LC", common:  "Pgymy thorny seahorse"},
+      "Hippocampus reidi": { status: "NT", common:  "Slender seahorse"},
+      "Hippocampus satomiae": { status: "DD", common:  "Satomi's seahorse"},
+      "Hippocampus sindonis": { status: "LC", common:  "Sindo's seahorse"},
+      "Hippocampus spinosissimus": { status: "VU", common:  "Hedgehog seahorse"},
+      "Hippocampus subelongatus": { status: "DD", common:  "Western Australian seahorse"},
+      "Hippocampus trimaculatus": { status: "VU", common:  "Three-spot seahorse"},
+      "Hippocampus tyro": { status: "DD", common:  "Tyro seahorse"},
+      "Hippocampus waleananus": { status: "CR", common:  "Walea soft coral pygmy seahorse"},
+      "Hippocampus whitei": { status: "EN", common:  "White's seahorse"},
+      "Hippocampus zebra": { status: "DD", common:  "Zebra seahorse"},
+      "Hippocampus zosterae": { status: "LC", common:  "Dwarf seahorse"}
+    };
+
+    const speciesDatabase = {
+        "Hippocampus abdominalis": {
+            desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+            habitat: "Coastal waters, harbors, and rocky reefs amongst macroalgae and seagrasses.",
+            threats: ["Habitat degradation", "Bycatch in trawl fisheries", "Aquarium trade"],
+            trend: "Stable",
+            size: 35
+        },
+        "Hippocampus bargibanti": {
+            desc: "A tiny, master of camouflage, this pygmy seahorse lives exclusively on Muricella gorgonian fans.",
+            habitat: "Coral reefs, specifically on Muricella gorgonian sea fans.",
+            threats: ["Coral reef destruction", "Climate change", "Recreational diving disturbance"],
+            trend: "Unknown",
+            size: 2.4
+        },
+        "Hippocampus capensis": {
+            desc: "The Knysna seahorse is an endangered species with a highly restricted range, found only in select estuaries in South Africa.",
+            habitat: "Estuaries, submerged vegetation like Zostera and Ruppia.",
+            threats: ["Urban development", "Water pollution", "Poaching"],
+            trend: "Decreasing",
+            size: 12
+        },
+        "Hippocampus comes": {
+            desc: "Commonly known as the Tiger tail seahorse due to its striped tail. Nocturnal and social.",
+            habitat: "Coral reefs, sponge gardens, seagrass beds.",
+            threats: ["Traditional medicine trade", "Aquarium trade", "Bycatch"],
+            trend: "Decreasing",
+            size: 18.7
+        },
+        "Hippocampus erectus": {
+            desc: "The Lined Seahorse is a hardy species found in the Atlantic. Varies greatly in color.",
+            habitat: "Seagrass, mangroves, coral reefs, floating Sargassum.",
+            threats: ["Shrimp trawl bycatch", "Coastal development", "Trade"],
+            trend: "Decreasing",
+            size: 19
+        },
+        "Hippocampus ingens": {
+            desc: "The Pacific Seahorse is the only seahorse species found in the Eastern Pacific.",
+            habitat: "Deep water, gorgonians, seagrass.",
+            threats: ["Intense bycatch", "Curio trade"],
+            trend: "Decreasing",
+            size: 30
+        },
+        "Hippocampus kuda": {
+            desc: "The Spotted Seahorse is widely distributed in the Indo-Pacific. heavily traded.",
+            habitat: "Estuaries, seagrass, mangroves, muddy bottoms.",
+            threats: ["Targeted trade for medicine", "Bycatch"],
+            trend: "Decreasing",
+            size: 30
+        },
+        "Hippocampus reidi": {
+            desc: "The Slender Seahorse is known for its long snout and variety of colors.",
+            habitat: "Mangroves, seagrass, gorgonians, piers.",
+            threats: ["Aquarium trade", "Habitat loss"],
+            trend: "Decreasing",
+            size: 17.5
+        },
+        "Hippocampus trimaculatus": {
+            desc: "Named for the three spots on its back. Often found in deeper waters.",
+            habitat: "Gravel/sand bottoms >10m.",
+            threats: ["Trawl bycatch (major threat)", "Trade"],
+            trend: "Decreasing",
+            size: 22
+        },
+        "Hippocampus whitei": {
+            desc: "White's Seahorse is endemic to Australia. It has adapted to artificial structures.",
+            habitat: "Seagrass, sponge gardens, protective swimming nets.",
+            threats: ["Urbanization", "Habitat loss"],
+            trend: "Decreasing",
+            size: 16
+        }
+    };
+
+    const genericData = {
+        desc: "This species contributes to the biodiversity of its ecosystem. Specific detailed data is currently being updated.",
+        habitat: "Coastal marine waters, often associated with seagrass, algae, or coral reefs.",
+        threats: ["Habitat degradation", "Bycatch", "Climate change"],
+        trend: "Unknown",
+        size: "N/A"
+    };
+
+    function getStatusColor(code) {
+        const colors = {
+            "LC": "#22c55e", "NT": "#a3e635", "VU": "#fbbf24",
+            "EN": "#f97316", "CR": "#ef4444", "DD": "#94a3b8"
+        };
+        return colors[code] || "#94a3b8";
+    }
+    
+    // --- DETAIL PANEL RENDERING ---
+    async function fetchAndShowDetails(scientificName, commonName, status) {
+        const panel = document.getElementById('detailPanel');
+        const header = document.getElementById('detailHeaderContent');
+        const body = document.getElementById('detailBody');
+        
+        panel.classList.add('active');
+        
+        // Header
+        header.innerHTML = `
+            <h2 class="detail-title">${commonName}</h2>
+            <p class="detail-subtitle">${scientificName}</p>
+        `;
+        body.innerHTML = `<div class="image-loader">Loading species data...</div>`;
+
+        // Data & Image
+        const statusColor = getStatusColor(status);
+        const data = speciesDatabase[scientificName] || genericData;
+        const imageData = await fetchSpeciesImage(scientificName);
+
+        let imageHTML = imageData ? 
+            `<div class="species-image-container">
+                <img src="${imageData.url}" class="species-image loaded" alt="${scientificName}">
+                <div class="image-credit">${imageData.attribution}</div>
+             </div>` : 
+            `<div class="species-image-container">
+                <span style="font-size:12px; color:rgba(255,255,255,0.5);">Image Not Available</span>
+             </div>`;
+
+        // Render Body
+        body.innerHTML = `
+            <div style="margin-bottom:20px;">
+                <span class="status-badge" style="background-color: ${statusColor}">${status || 'N/A'}</span>
+                <span style="color:rgba(255,255,255,0.7); font-size:12px; font-weight:600;">IUCN RED LIST</span>
+            </div>
+
+            ${imageHTML}
+
+            <p class="text-body" style="margin-top:20px;">${data.desc}</p>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <span class="info-label">Population Trend</span>
+                    <div class="info-value" style="color: ${data.trend === 'Decreasing' ? '#f97316' : 'white'}">
+                        ${data.trend}
+                    </div>
+                </div>
+                <div class="info-box">
+                    <span class="info-label">Max Size</span>
+                    <div class="info-value">${data.size} ${data.size !== 'N/A' ? 'cm' : ''}</div>
+                </div>
+            </div>
+
+            <div class="section-title">Habitat</div>
+            <p class="text-body">${data.habitat}</p>
+            
+            <div class="section-title">Major Threats</div>
+            <div style="margin-top:10px">
+                ${data.threats.map(t => `<div class="threat-item"><div class="threat-dot"></div>${t}</div>`).join('')}
+            </div>
+        `;
+    }
+
+    // --- CHART LOGIC ---
+    function showTradeData() {
+        const panel = document.getElementById('detailPanel');
+        const header = document.getElementById('detailHeaderContent');
+        const body = document.getElementById('detailBody');
+        
+        panel.classList.add('active');
+        header.innerHTML = `
+            <h2 class="detail-title">Global Illegal Trade</h2>
+            <p class="detail-subtitle">Number of seahorses seized by country</p>
+        `;
+        
+        const sorted = [...seizureData].sort((a,b) => (b.exp+b.imp+b.tr) - (a.exp+a.imp+a.tr));
+        const maxVal = sorted[0].exp + sorted[0].imp + sorted[0].tr;
+
+        const chartRows = sorted.map(d => {
+            const total = d.exp + d.imp + d.tr;
+            const expPct = (d.exp / maxVal) * 100;
+            const impPct = (d.imp / maxVal) * 100;
+            const trPct = (d.tr / maxVal) * 100;
+            
+            return `
+            <div class="chart-row">
+                <div class="chart-label" title="${d.c}">${d.c}</div>
+                <div class="chart-bar-wrapper">
+                    ${d.exp > 0 ? `<div class="chart-bar" style="width:${expPct}%; background:#24a8e0;" title="Export: ${Math.round(d.exp)}"></div>` : ''}
+                    ${d.tr > 0 ? `<div class="chart-bar" style="width:${trPct}%; background:#fbff0a;" title="Transit: ${Math.round(d.tr)}"></div>` : ''}
+                    ${d.imp > 0 ? `<div class="chart-bar" style="width:${impPct}%; background:#e64c4f;" title="Import: ${Math.round(d.imp)}"></div>` : ''}
+                </div>
+                <div class="chart-val">${Math.round(total).toLocaleString()}</div>
+            </div>`;
+        }).join('');
+
+        body.innerHTML = `
+            <div style="margin-bottom:20px; display:flex; gap:15px; justify-content:center; font-size:11px;">
+                <div style="display:flex; align-items:center; color:#ccc;"><span class="legend-swatch" style="background:#24a8e0;"></span>Export</div>
+                <div style="display:flex; align-items:center; color:#ccc;"><span class="legend-swatch" style="background:#fbff0a;"></span>Transit</div>
+                <div style="display:flex; align-items:center; color:#ccc;"><span class="legend-swatch" style="background:#e64c4f;"></span>Import</div>
+            </div>
+            <div class="chart-container">
+                ${chartRows}
+            </div>
+            <p style="font-size:10px; color:#94a3b8; margin-top:20px; text-align:center">Data: Foster, S. J., Ascione, S. J., Santaniello, F., & Phelps Bondaroff, T. N. (2025). Using online reports of seahorse seizures to track their illegal trade. Conservation Biology, e70047. https://doi.org/10.1111/cobi.70047</p>
+        `;
+    }
+
+    // --- CATCH LIST LOGIC ---
+    function showCatchData(countryName) {
+        const panel = document.getElementById('detailPanel');
+        const header = document.getElementById('detailHeaderContent');
+        const body = document.getElementById('detailBody');
+        
+        panel.classList.add('active');
+
+        // Normalize Country Name Check
+        let targetCountry = countryName;
+        let filteredData = [];
+
+        if (targetCountry) {
+             filteredData = catchData.filter(item => item.country.toLowerCase() === targetCountry.toLowerCase());
+             if (filteredData.length === 0) {
+                 // Fuzzy match attempt (e.g. "Vietnam" -> "Viet Nam")
+                 const candidates = catchData.filter(d => 
+                     d.country.toLowerCase().includes(targetCountry.toLowerCase()) || 
+                     targetCountry.toLowerCase().includes(d.country.toLowerCase())
+                 );
+                 if (candidates.length > 0) {
+                     targetCountry = candidates[0].country;
+                     filteredData = catchData.filter(item => item.country === targetCountry);
+                 } else {
+                     targetCountry = null;
+                 }
+             }
+        }
+        
+        // VIEW 1: Country List (If no country selected or not found)
+        if (!targetCountry) {
+            header.innerHTML = `
+                <h2 class="detail-title">Reported gear types for seahorse catch</h2>
+                <p class="detail-subtitle">Select a country to view gear analysis</p>
+            `;
+            
+            // Calculate unique countries and sort by total gear types count (descending)
+            const uniqueCountries = [...new Set(catchData.map(d => d.country))];
+            const countryStats = uniqueCountries.map(c => {
+                const count = catchData.filter(d => d.country === c).length;
+                return { name: c, count: count };
+            }).sort((a, b) => b.count - a.count);
+            
+            const listHtml = countryStats.map(stat => `
+                <div class="country-list-item" onclick="window.selectCountry('${stat.name}')" style="
+                    padding: 12px; 
+                    border-bottom: 1px solid rgba(255,255,255,0.1); 
+                    cursor: pointer; 
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: center;
+                    transition: background 0.2s;
+                ">
+                    <span style="font-size:14px; color: #e0f2fe;">${stat.name}</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:11px; background:rgba(251, 191, 36, 0.15); padding:2px 6px; border-radius:4px; color:#fbbf24; font-weight:700;">${stat.count} types</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </div>
+            `).join('');
+
+            body.innerHTML = `
+                <style>
+                    .country-list-item:hover { background: rgba(255,255,255,0.1); }
+                    .country-list-item:hover svg { stroke: white; }
+                    .country-list-item:hover span[style*="background"] { background: rgba(251, 191, 36, 0.25) !important; }
+                </style>
+                <div style="margin-bottom:15px; font-size:13px; color:rgba(255,255,255,0.6); padding: 0 10px;">
+                    Countries sorted by reported gear diversity:
+                </div>
+                <div style="background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden;">
+                    ${listHtml}
+                </div>
+            `;
+            return;
+        }
+
+        // VIEW 2: Detail List
+        header.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button onclick="window.selectCountry(null)" style="background:none; border:none; color:white; cursor:pointer; padding:4px; opacity:0.7;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div>
+                    <h2 class="detail-title" style="font-size:22px; margin-bottom:2px;">${targetCountry}</h2>
+                    <p class="detail-subtitle">Reported Fishing Gear</p>
+                </div>
+            </div>
+        `;
+
+        // Aggregate Data
+        const agg = {};
+        filteredData.forEach(d => {
+            let name = d.gear.replace(/\s*\(.*?\)\s*/g, '').trim(); 
+            if (name.length > 30) name = name.substring(0, 28) + "...";
+            agg[name] = (agg[name] || 0) + d.count;
+        });
+        
+        const chartData = Object.keys(agg).map((key, i) => ({
+            label: key,
+            value: agg[key],
+            color: gearColors[i % gearColors.length]
+        })).sort((a,b) => b.value - a.value);
+
+        // Render List instead of Pie Chart
+        const maxCount = chartData.length > 0 ? chartData[0].value : 1;
+        
+        const listHtml = chartData.map(item => {
+            const widthPct = (item.value / maxCount) * 100; // Relative to max
+            return `
+            <div style="margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; color:#e0f2fe; margin-bottom:4px;">
+                    <span>${item.label}</span>
+                    <span style="font-weight:600; color:white;">${item.value}</span>
+                </div>
+                <div style="height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+                    <div style="height:100%; width:${widthPct}%; background:${item.color}; border-radius:3px;"></div>
+                </div>
+            </div>`;
+        }).join('');
+
+        body.innerHTML = `
+            <div style="background:rgba(0,0,0,0.25); padding:20px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                <div style="font-size:11px; font-weight:700; color:#60a5fa; margin-bottom:16px; text-transform:uppercase; letter-spacing:0.5px;">Gear Types List (Source Count)</div>
+                <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                    ${listHtml}
+                </div>
+            </div>
+        `;
+    }
+    
+    // Expose for inline onclick
+    window.selectCountry = (c) => showCatchData(c);
+
+    document.getElementById('closeDetail').addEventListener('click', () => {
+        document.getElementById('detailPanel').classList.remove('active');
+    });
+
+    // --- LEGEND GENERATION ---
+    function addLayerToLegend(layer, container, level = 0) {
+      if (layer.title === "Seahorse species_by depth") return;
+      
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      
+      const collapseToggle = document.createElement("div");
+      collapseToggle.className = "collapse-toggle";
+      collapseToggle.textContent = layer.type === "group" ? "+" : "";
+
+      const labelContainer = document.createElement("div");
+      labelContainer.className = "legend-label-container";
+
+      const symbol = document.createElement("div");
+      symbol.className = "legend-symbol";
+
+      if (layer.type !== "group") {
+        const customSymbols = {
+          "Exporter": "#24a8e0", "Transit": "#fbff0a", "Importer": "#e64c4f",
+          "Coral reefs": "#e64e4e", "Seagrass": "#4ccd75", "Mangroves": "#736e1c",
+          "Hippocampus abdominalis": "#e64e4e", "Hippocampus algiricus": "#4c81cd",
+           "Hippocampus breviceps": "#4c81cd", "Hippocampus minotaur": "#f68efa",
+          "Hippocampus paradoxus": "#cdbb4c", "Hippocampus subelongatus": "#949494",
+          "Hippocampus whitei": "#4ccd75", "Hippocampus debelius": "#eb7a7c",
+          "Hippocampus comes": "#ba82e8", "Hippocampus haema": "#ec7a78",
+          "Hippocampus japapigu": "#c970a7", "Hippocampus satomiae": "#7b9ee1",
+          "Hippocampus trimaculatus": "#69a880", "Hippocampus waleananus": "#fc7e43",
+          "Hippocampus nalu": "#79d998", "Hippocampus hippocampus": "#eb7e79",
+          "Hippocampus guttulatus": "#fdea7e", "Hippocampus angustus": "#cf6eaa",
+          "Hippocampus dahli": "#93d9e5", "Hippocampus planifrons": "#f97f47",
+          "Hippocampus zebra": "#6c678f", "Hippocampus bargibanti": "#98d7e9",
+          "Hippocampus erectus": "#ca72a6", "Hippocampus fisheri": "#74a2dd",
+          "Hippocampus ingens": "#ed7a7d", "Hippocampus patagonicus": "#94dbde",
+          "Hippocampus reidi": "#88cf99", "Hippocampus zosterae": "#b882e1",
+          "Hippocampus denise": "#fcec7d", "Reported catch countries": "#a8a8a8",
+          "Seahorse seizures": "#a8a8a8"
+        };
+        const color = customSymbols[layer.title] || "#ccc";
+        if (color.startsWith("linear-gradient")) symbol.style.background = color;
+        else symbol.style.backgroundColor = color;
+
+        // Set Initial Visibility Rules
+        if(layer.title === "Reported catch countries") {
+            layer.opacity = 0.6; layer.visible = true;
+        } else if (layer.title !== "Ocean Basemap" && layer.title !== "World Hillshade" && layer.title !== "Seahorse seizures") {
+            layer.visible = false; 
+        }
+      } else {
+          symbol.style.display = 'none';
+      }
+
+      const label = document.createElement("div");
+      label.className = "legend-label";
+
+      if (speciesInfo[layer.title]) {
+        const info = speciesInfo[layer.title];
+        const statusColor = getStatusColor(info.status);
+        const badgeHTML = info.status ? `<span class="status-badge" style="background-color: ${statusColor}">${info.status}</span>` : "";
+        label.innerHTML = `<i>${layer.title}</i><div style="margin-top:2px; font-size:13px; opacity:0.8">${badgeHTML} ${info.common}</div>`;
+      } else {
+        label.textContent = layer.title;
+      }
+
+      labelContainer.appendChild(symbol);
+      labelContainer.appendChild(label);
+
+      const leftContainer = document.createElement("div");
+      leftContainer.className = "legend-left";
+      if (layer.type === "group") leftContainer.appendChild(collapseToggle);
+      leftContainer.appendChild(labelContainer);
+
+      const eye = document.createElement("div");
+      eye.className = "eye-icon";
+      // Eye Icon SVG Helper
+      const getEyeSVG = (visible) => visible ? 
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' : 
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+      
+      eye.innerHTML = getEyeSVG(layer.visible);
+
+      item.appendChild(leftContainer);
+      item.appendChild(eye);
+      container.appendChild(item);
+
+      eye.addEventListener("click", e => {
+        e.stopPropagation();
+        const newVisible = !layer.visible;
+        layer.visible = newVisible;
+        eye.innerHTML = getEyeSVG(newVisible);
+
+        // Recursively update model layer objects
+        const updateModelVisibility = (parent) => {
+             if (parent.layers && (parent.layers.items || Array.isArray(parent.layers))) {
+                const children = parent.layers.items || parent.layers;
+                children.forEach(c => { 
+                    c.visible = newVisible;
+                    updateModelVisibility(c);
+                });
+            }
+        };
+        updateModelVisibility(layer);
+
+        // Recursively update DOM eye icons
+        if (layer.type === "group") {
+            const subContainer = item.nextElementSibling;
+            if (subContainer && subContainer.classList.contains("sublayer-container")) {
+                const childEyes = subContainer.querySelectorAll(".eye-icon");
+                childEyes.forEach(childEye => {
+                    childEye.innerHTML = getEyeSVG(newVisible);
+                });
+            }
+        }
+      });
+
+      label.addEventListener("click", async e => {
+        e.stopPropagation();
+        try {
+          label.style.color = "var(--accent-gold)";
+          setTimeout(() => label.style.color = "", 500);
+          
+          // Auto-turn on layer if clicked
+          layer.visible = true;
+          eye.innerHTML = getEyeSVG(true);
+          
+          await layer.load();
+          if (layer.fullExtent) await view.goTo(layer.fullExtent.expand(1.2));
+          else if (layer.extent) await view.goTo(layer.extent.expand(1.2));
+          
+          if (["Exporter", "Importer", "Transit", "Seahorse seizures"].includes(layer.title)) {
+              showTradeData();
+          } else if (layer.title === "Reported catch countries") {
+              showCatchData(null); 
+          } else if (speciesInfo[layer.title]) {
+              const info = speciesInfo[layer.title];
+              fetchAndShowDetails(layer.title, info.common, info.status);
+          }
+        } catch (err) { console.error(err); }
+      });
+
+      if (layer.type === "group") {
+        const subContainer = document.createElement("div");
+        subContainer.className = "sublayer-container";
+        container.appendChild(subContainer);
+        item.addEventListener("click", e => {
+          if (e.target.closest(".eye-icon")) return;
+          const isExpanded = subContainer.classList.toggle("expanded");
+          collapseToggle.textContent = isExpanded ? "–" : "+";
+        });
+        const sorted = [...layer.layers.items].sort((a, b) => a.title.localeCompare(b.title));
+        sorted.forEach(l => addLayerToLegend(l, subContainer, level + 1));
+      }
+    }
+
+    const legendContainer = document.getElementById("legendItems");
+    legendContainer.innerHTML = "";
+    
+    // Custom Sorting: 1. Species, 2. Catch, 3. Trade, 4. Other
+    const getLayerPriority = (layer) => {
+        const t = layer.title;
+        if ((t.toLowerCase().includes("species") || speciesInfo[t]) && !t.includes("depth")) return 1;
+        if (t.includes("Reported catch")) return 2;
+        if (t.includes("seizure") || t.includes("Seizure") || t.includes("Trade") || ["Exporter", "Importer", "Transit"].includes(t)) return 3;
+        return 4;
+    };
+
+    const sortedLayers = [...webmap.layers.items].sort((a, b) => {
+        const pA = getLayerPriority(a);
+        const pB = getLayerPriority(b);
+        if (pA !== pB) return pA - pB;
+        return webmap.layers.indexOf(b) - webmap.layers.indexOf(a);
+    });
+
+    sortedLayers.forEach(layer => addLayerToLegend(layer, legendContainer));
+
+    // --- INTERACTION: Click on Map Features ---
+    view.on("click", async (event) => {
+      view.popup.close(); // Force close any default popup
+
+      const response = await view.hitTest(event);
+      if (response.results.length === 0) return;
+
+      // Find the first graphic that belongs to a relevant layer (Species, Trade, or Catch)
+      const hit = response.results.find(r => {
+          const g = r.graphic;
+          if (!g || !g.layer) return false;
+          const t = g.layer.title;
+          return speciesInfo[t] || 
+                 ["Exporter", "Importer", "Transit", "Seahorse seizures"].includes(t) ||
+                 t === "Reported catch countries";
+      });
+
+      if (hit) {
+          const title = hit.graphic.layer.title;
+          if (speciesInfo[title]) {
+              // Species
+              const info = speciesInfo[title];
+              fetchAndShowDetails(title, info.common, info.status);
+          } else if (title === "Reported catch countries") {
+              // Catch
+              const attr = hit.graphic.attributes;
+              // Try various attribute names for country (robust check)
+              const candidates = [
+                  attr.country, attr.Country, attr.COUNTRY, 
+                  attr.name, attr.Name, attr.NAME, 
+                  attr.cntry_name, attr.CNTRY_NAME, attr.Cntry_Name,
+                  attr.sovereignt, attr.SOVEREIGNT,
+                  attr.admin, attr.ADMIN
+              ];
+              const country = candidates.find(c => c && typeof c === 'string');
+              
+              // Pass whatever we found; fuzzy matcher will handle it or show list if null
+              showCatchData(country);
+          } else {
+              // Trade
+              showTradeData();
+          }
+      }
+    });
+
+    const searchBox = document.getElementById("legendSearch");
+    const sidebar = document.getElementById("legendSidebar");
+    searchBox.addEventListener("input", () => {
+      const query = searchBox.value.trim().toLowerCase();
+      const isSearching = query.length > 0;
+      
+      if (isSearching) {
+          sidebar.classList.add("search-active");
+      } else {
+          sidebar.classList.remove("search-active");
+          // Clear all inline display styles to revert to CSS classes
+          document.querySelectorAll(".legend-item, .sublayer-container").forEach(el => {
+              el.style.display = "";
+          });
+          return;
+      }
+
+      const setDisplay = (el, show) => el.style.display = show ? "flex" : "none";
+      
+      function searchItem(item) {
+        const label = item.querySelector(".legend-label");
+        const subContainer = item.nextElementSibling;
+        if (!label) return false;
+        
+        const text = label.textContent;
+        let selfMatch = text.toLowerCase().includes(query);
+        
+        let childMatch = false;
+        if (subContainer && subContainer.classList.contains("sublayer-container")) {
+           // Only check legend-items, skip nested containers (they are handled by CSS visibility)
+           Array.from(subContainer.children).forEach(subItem => { 
+               if (subItem.classList.contains("legend-item")) {
+                   if(searchItem(subItem)) childMatch = true; 
+               }
+           });
+        }
+        
+        const isVisible = selfMatch || childMatch;
+        setDisplay(item, isVisible);
+        
+        // Note: We do NOT modify .expanded class here. 
+        // The CSS .search-active .sublayer-container { display: block !important } handles expansion view.
+        
+        return isVisible;
+      }
+      
+      Array.from(document.querySelectorAll("#legendItems > .legend-item")).forEach(searchItem);
+    });
+  </script>
+</body>
+</html>
