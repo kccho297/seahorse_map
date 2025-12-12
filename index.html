@@ -395,7 +395,7 @@
             <div class="sidebar-header">
                 <div class="search-wrapper">
                     <div class="search-icon"></div>
-                    <input type="text" id="legendSearch" placeholder="Search species, habitats..." autocomplete="off">
+                    <input type="text" id="legendSearch" placeholder="Search species and Red List status..." autocomplete="off">
                 </div>
             </div>
             <div id="legendItems"></div>
@@ -414,33 +414,56 @@
             // --- DATASETS ---
             const catchData = [{country:"Argentina",gear:"Bottom trawls (nei)",count:1},{country:"Argentina",gear:"Diving",count:1},{country:"Argentina",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Australia",gear:"Bottom trawls (nei)",count:10},{country:"Australia",gear:"Diving",count:3},{country:"Australia",gear:"Gear nei",count:1},{country:"Azores Islands (Portugal)",gear:"Gear not known",count:1},{country:"Bangladesh",gear:"Bottom trawls (nei)",count:1},{country:"Bangladesh",gear:"Pushnets",count:1},{country:"Bangladesh",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Bangladesh",gear:"Stationary uncovered pound nets",count:1},{country:"Belgium",gear:"Bottom trawls (nei)",count:1},{country:"Belgium",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Belgium",gear:"Traps (nei)",count:1},{country:"Belgium",gear:"Gear not known",count:1},{country:"Belize",gear:"Bottom trawls (nei)",count:1},{country:"Belize",gear:"Diving",count:1},{country:"Brazil",gear:"Bottom trawls (nei)",count:14},{country:"Brazil",gear:"Diving",count:5},{country:"Brazil",gear:"Gear nei",count:4},{country:"Brazil",gear:"Beach seines",count:3},{country:"Brazil",gear:"Cast nets",count:3},{country:"Brazil",gear:"Gillnets and entangling nets (nei)",count:2},{country:"Brazil",gear:"Set gillnets (anchored)",count:2},{country:"Brazil",gear:"Barriers, fences, weirs, etc.",count:2},{country:"Brazil",gear:"Gear not known",count:2},{country:"Brazil",gear:"Seine nets (nei)",count:1},{country:"Brazil",gear:"Pots",count:1},{country:"Cambodia",gear:"Bottom trawls (nei)",count:2},{country:"Cambodia",gear:"Gear nei",count:1},{country:"Cambodia",gear:"Pushnets",count:1},{country:"Cambodia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Cambodia",gear:"Fyke nets",count:1},{country:"Cambodia",gear:"Pots",count:1},{country:"Cambodia",gear:"Traps (nei)",count:1},{country:"Chile",gear:"Bottom trawls (nei)",count:1},{country:"China",gear:"Bottom trawls (nei)",count:4},{country:"China",gear:"Gear not known",count:2},{country:"China",gear:"Gillnets and entangling nets (nei)",count:1},{country:"China",gear:"Cast nets",count:1},{country:"Costa Rica",gear:"Diving",count:2},{country:"Costa Rica",gear:"Bottom trawls (nei)",count:1},{country:"Costa Rica",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Croatia",gear:"Gear not known",count:1},{country:"Ecuador",gear:"Bottom trawls (nei)",count:2},{country:"Ecuador",gear:"Diving",count:2},{country:"Ecuador",gear:"Beach seines",count:1},{country:"Ecuador",gear:"Purse seines",count:1},{country:"France",gear:"Bottom trawls (nei)",count:3},{country:"France",gear:"Stationary uncovered pound nets",count:1},{country:"Gambia",gear:"Bottom trawls (nei)",count:2},{country:"Gambia",gear:"Diving",count:1},{country:"Gambia",gear:"Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)",count:1},{country:"Gambia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Gambia",gear:"Set gillnets (anchored)",count:1},{country:"Gambia",gear:"Beach seines",count:1},{country:"Gambia",gear:"Seine nets (nei)",count:1},{country:"Gambia",gear:"Pots",count:1},{country:"Gambia",gear:"Traps (nei)",count:1},{country:"Gambia",gear:"Cast nets",count:1},{country:"Gambia",gear:"Handlines and hand-operated pole-and-lines",count:1},{country:"Germany",gear:"Traps (nei)",count:3},{country:"Germany",gear:"Bottom trawls (nei)",count:1},{country:"Greece",gear:"Bottom trawls (nei)",count:2},{country:"Greece",gear:"Boat seines",count:1},{country:"Guatemala",gear:"Bottom trawls (nei)",count:2},{country:"Guatemala",gear:"Trammel nets",count:1},{country:"Honduras",gear:"Bottom trawls (nei)",count:2},{country:"Honduras",gear:"Trammel nets",count:1},{country:"Honduras",gear:"Seine nets (nei)",count:1},{country:"Hong Kong SAR",gear:"Gear not known",count:1},{country:"India",gear:"Bottom trawls (nei)",count:10},{country:"India",gear:"Diving",count:5},{country:"India",gear:"Gear nei",count:3},{country:"India",gear:"Gillnets and entangling nets (nei)",count:3},{country:"India",gear:"Beach seines",count:3},{country:"India",gear:"Seine nets (nei)",count:2},{country:"India",gear:"Traps (nei)",count:2},{country:"India",gear:"Surrounding nets (nei)",count:2},{country:"India",gear:"Drift gillnets",count:1},{country:"India",gear:"Set gillnets (anchored)",count:1},{country:"India",gear:"Trammel nets",count:1},{country:"India",gear:"Barriers, fences, weirs, etc.",count:1},{country:"India",gear:"Cast nets",count:1},{country:"India",gear:"Falling gear (nei)",count:1},{country:"India",gear:"Purse seines",count:1},{country:"India",gear:"Hooks and lines (nei)",count:1},{country:"Indonesia",gear:"Bottom trawls (nei)",count:3},{country:"Indonesia",gear:"Diving",count:3},{country:"Indonesia",gear:"Gear not known",count:3},{country:"Indonesia",gear:"Gear nei",count:2},{country:"Indonesia",gear:"Pushnets",count:2},{country:"Indonesia",gear:"Beach seines",count:2},{country:"Indonesia",gear:"Scoopnets",count:1},{country:"Indonesia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Indonesia",gear:"Barriers, fences, weirs, etc.",count:1},{country:"Indonesia",gear:"Pots",count:1},{country:"Indonesia",gear:"Cast nets",count:1},{country:"Indonesia",gear:"Purse seines",count:1},{country:"Indonesia",gear:"Lift nets (nei)",count:1},{country:"Italy",gear:"Bottom trawls (nei)",count:3},{country:"Italy",gear:"Gear nei",count:3},{country:"Italy",gear:"Gear not known",count:3},{country:"Italy",gear:"Beach seines",count:2},{country:"Italy",gear:"Harpoons",count:1},{country:"Italy",gear:"Trammel nets",count:1},{country:"Italy",gear:"Pots",count:1},{country:"Italy",gear:"Purse seines",count:1},{country:"Japan",gear:"Bottom trawls (nei)",count:1},{country:"Kenya",gear:"Bottom trawls (nei)",count:1},{country:"Kenya",gear:"Diving",count:1},{country:"Kenya",gear:"Seine nets (nei)",count:1},{country:"Kenya",gear:"Cast nets",count:1},{country:"Kenya",gear:"Purse seines",count:1},{country:"Kuwait",gear:"Bottom trawls (nei)",count:1},{country:"Malaysia",gear:"Bottom trawls (nei)",count:10},{country:"Malaysia",gear:"Drift gillnets",count:4},{country:"Malaysia",gear:"Gear nei",count:3},{country:"Malaysia",gear:"Cast nets",count:3},{country:"Malaysia",gear:"Purse seines",count:3},{country:"Malaysia",gear:"Diving",count:1},{country:"Malaysia",gear:"Pushnets",count:1},{country:"Malaysia",gear:"Scoopnets",count:1},{country:"Malaysia",gear:"Trammel nets",count:1},{country:"Malaysia",gear:"Seine nets (nei)",count:1},{country:"Malaysia",gear:"Barriers, fences, weirs, etc.",count:1},{country:"Malaysia",gear:"Pots",count:1},{country:"Malaysia",gear:"Stationary uncovered pound nets",count:1},{country:"Malaysia",gear:"Stow nets",count:1},{country:"Malaysia",gear:"Traps (nei)",count:1},{country:"Malaysia",gear:"Hooks and lines (nei)",count:1},{country:"Mexico",gear:"Bottom trawls (nei)",count:4},{country:"Mexico",gear:"Diving",count:3},{country:"Mexico",gear:"Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)",count:1},{country:"Mexico",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Mexico",gear:"Set gillnets (anchored)",count:1},{country:"Mexico",gear:"Beach seines",count:1},{country:"Mexico",gear:"Boat seines",count:1},{country:"Mexico",gear:"Pots",count:1},{country:"Mexico",gear:"Cast nets",count:1},{country:"Mozambique",gear:"Beach seines",count:1},{country:"Mozambique",gear:"Purse seines",count:1},{country:"Netherlands",gear:"Bottom trawls (nei)",count:1},{country:"New Zealand",gear:"Bottom trawls (nei)",count:2},{country:"New Zealand",gear:"Longlines (nei)",count:1},{country:"Nicaragua",gear:"Bottom trawls (nei)",count:2},{country:"Nicaragua",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Nigeria",gear:"Bottom trawls (nei)",count:1},{country:"Norway",gear:"Bottom trawls (nei)",count:1},{country:"Norway",gear:"Pots",count:1},{country:"Oman",gear:"Traps (nei)",count:1},{country:"Pakistan",gear:"Bottom trawls (nei)",count:1},{country:"Pakistan",gear:"Diving",count:1},{country:"Pakistan",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Panama",gear:"Diving",count:2},{country:"Panama",gear:"Bottom trawls (nei)",count:1},{country:"Peru",gear:"Bottom trawls (nei)",count:3},{country:"Peru",gear:"Diving",count:3},{country:"Peru",gear:"Gillnets and entangling nets (nei)",count:3},{country:"Peru",gear:"Set gillnets (anchored)",count:1},{country:"Peru",gear:"Trammel nets",count:1},{country:"Peru",gear:"Purse seines",count:1},{country:"Philippines",gear:"Diving",count:10},{country:"Philippines",gear:"Bottom trawls (nei)",count:5},{country:"Philippines",gear:"Gear nei",count:5},{country:"Philippines",gear:"Pushnets",count:4},{country:"Philippines",gear:"Beach seines",count:2},{country:"Philippines",gear:"Seine nets (nei)",count:2},{country:"Philippines",gear:"Barriers, fences, weirs, etc.",count:2},{country:"Philippines",gear:"Pots",count:2},{country:"Philippines",gear:"Drift gillnets",count:1},{country:"Philippines",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Philippines",gear:"Set gillnets (anchored)",count:1},{country:"Philippines",gear:"Boat seines",count:1},{country:"Philippines",gear:"Traps (nei)",count:1},{country:"Philippines",gear:"Cover pots/Lantern nets",count:1},{country:"Philippines",gear:"Gear not known",count:1},{country:"Portugal",gear:"Bottom trawls (nei)",count:2},{country:"Portugal",gear:"Beach seines",count:2},{country:"Portugal",gear:"Pushnets",count:1},{country:"Portugal",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Portugal",gear:"Trammel nets",count:1},{country:"Portugal",gear:"Pots",count:1},{country:"Portugal",gear:"Traps (nei)",count:1},{country:"Senegal",gear:"Bottom trawls (nei)",count:2},{country:"Senegal",gear:"Diving",count:1},{country:"Senegal",gear:"Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)",count:1},{country:"Senegal",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Senegal",gear:"Set gillnets (anchored)",count:1},{country:"Senegal",gear:"Beach seines",count:1},{country:"Senegal",gear:"Seine nets (nei)",count:1},{country:"Senegal",gear:"Pots",count:1},{country:"Senegal",gear:"Traps (nei)",count:1},{country:"Senegal",gear:"Cast nets",count:1},{country:"Senegal",gear:"Handlines and hand-operated pole-and-lines",count:1},{country:"South Korea",gear:"Seine nets (nei)",count:1},{country:"South Korea",gear:"Purse seines",count:1},{country:"South Korea",gear:"Gear not known",count:1},{country:"Spain",gear:"Gear nei",count:2},{country:"Spain",gear:"Bottom trawls (nei)",count:1},{country:"Spain",gear:"Seine nets (nei)",count:1},{country:"Spain",gear:"Gear not known",count:1},{country:"Sri Lanka",gear:"Bottom trawls (nei)",count:1},{country:"Sri Lanka",gear:"Gear nei",count:1},{country:"Sri Lanka",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Sri Lanka",gear:"Fyke nets",count:1},{country:"Sweden",gear:"Pots",count:1},{country:"Taiwan",gear:"Bottom trawls (nei)",count:1},{country:"Taiwan",gear:"Gear not known",count:1},{country:"Tanzania",gear:"Bottom trawls (nei)",count:2},{country:"Tanzania",gear:"Gear nei",count:2},{country:"Tanzania",gear:"Seine nets (nei)",count:2},{country:"Tanzania",gear:"Purse seines",count:2},{country:"Tanzania",gear:"Diving",count:1},{country:"Tanzania",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Tanzania",gear:"Beach seines",count:1},{country:"Tanzania",gear:"Pots",count:1},{country:"Tanzania",gear:"Traps (nei)",count:1},{country:"Tanzania",gear:"Cast nets",count:1},{country:"Tanzania",gear:"Surrounding nets (nei)",count:1},{country:"Thailand",gear:"Bottom trawls (nei)",count:7},{country:"Thailand",gear:"Gillnets and entangling nets (nei)",count:4},{country:"Thailand",gear:"Pushnets",count:3},{country:"Thailand",gear:"Diving",count:2},{country:"Thailand",gear:"Pots",count:1},{country:"Thailand",gear:"Purse seines",count:1},{country:"Tunisia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Tunisia",gear:"Dredges (nei)",count:1},{country:"Turkey",gear:"Bottom trawls (nei)",count:5},{country:"Turkey",gear:"Gillnets and entangling nets (nei)",count:4},{country:"Turkey",gear:"Gear nei",count:2},{country:"Turkey",gear:"Purse seines",count:2},{country:"Turkey",gear:"Gear not known",count:2},{country:"Turkey",gear:"Beach seines",count:1},{country:"United Arab Emirates",gear:"Midwater trawls (nei)",count:1},{country:"United Kingdom",gear:"Bottom trawls (nei)",count:2},{country:"United Kingdom",gear:"Gillnets and entangling nets (nei)",count:1},{country:"United Kingdom",gear:"Pots",count:1},{country:"United States",gear:"Bottom trawls (nei)",count:5},{country:"United States",gear:"Beach seines",count:2},{country:"United States",gear:"Gillnets and entangling nets (nei)",count:1},{country:"United States",gear:"Gear not known",count:1},{country:"Uruguay",gear:"Fyke nets",count:1},{country:"Viet Nam",gear:"Bottom trawls (nei)",count:9},{country:"Viet Nam",gear:"Diving",count:6},{country:"Viet Nam",gear:"Electric fishing",count:1},{country:"Viet Nam",gear:"Set gillnets (anchored)",count:1},{country:"Viet Nam",gear:"Boat seines",count:1},{country:"Viet Nam",gear:"Pots",count:1},{country:"Viet Nam",gear:"Traps (nei)",count:1}];
             const gearColors = ["#3b82f6", "#06b6d4", "#14b8a6", "#84cc16", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#6366f1", "#9ca3af"];
-            const manualImageOverrides = {};
+            const manualImageOverrides = { 
+"Hippocampus algiricus": {
+url: "https://inaturalist-open-data.s3.amazonaws.com/photos/592647296/large.jpg",
+attribution: "Dennis Rabeling / iNaturalist"},
+"Hippocampus erectus": {
+url: "https://static.inaturalist.org/photos/12112390/large.jpg",
+attribution: "seahorses_of_the_world / iNaturalist "},
+"Hippocampus ingens": {
+url: "https://static.inaturalist.org/photos/12112505/large.jpg",
+attribution: "seahorses_of_the_world / iNaturalist"},
+"seahorses_of_the_world / iNaturalist ": {
+url: "https://static.inaturalist.org/photos/49805056/large.jpg",
+attribution: "seahorses_of_the_world / iNaturalist 8"},
+"Hippocampus bargibanti": {
+url: "https://static.inaturalist.org/photos/49731161/large.jpg",
+attribution: "seahorses_of_the_world / iNaturalist "},
+"Hippocampus denise": {
+url: "https://static.inaturalist.org/photos/49840052/large.jpg",
+attribution: "seahorses_of_the_world / iNaturalist "},
+"Hippocampus satomiae": {
+url: "https://static.inaturalist.org/photos/49722255/large.jpg",
+attribution: "seahorses_of_the_world / iNaturalist "},
+
+};
             const seizureData = [{c:"Viet Nam",exp:243412.6,imp:617992.1,tr:80520.45},{c:"China",exp:113723,imp:1705997,tr:27881.04},{c:"Hong Kong SAR",exp:116349.1,imp:523960.5,tr:1028.535},{c:"India",exp:221765.4,imp:25118.11,tr:92852.31},{c:"Philippines",exp:215936.9,imp:96394.46,tr:21561.34},{c:"Peru",exp:1885832,imp:0,tr:443494.1},{c:"Thailand",exp:30271.61,imp:24140.37,tr:5204.461},{c:"Egypt",exp:156245.1,imp:18587.36,tr:15241.64},{c:"Indonesia",exp:113961.3,imp:557.6208,tr:0},{c:"Mozambique",exp:39464.68,imp:0,tr:3345.725},{c:"Malaysia",exp:316.4758,imp:11152.42,tr:7040},{c:"Mexico",exp:17222.09,imp:947,tr:531},{c:"Nepal",exp:15241.64,imp:0,tr:5204.461},{c:"UAE",exp:0,imp:22118.96,tr:7806.691},{c:"Panama",exp:0,imp:20000,tr:0},{c:"China (Macau)",exp:0,imp:19702.6,tr:0},{c:"France",exp:0,imp:54,tr:20952},{c:"Bolivia",exp:0,imp:0,tr:23258.33},{c:"Germany",exp:0,imp:53,tr:16248},{c:"Belgium",exp:0,imp:15,tr:13551},{c:"Netherlands",exp:0,imp:0,tr:6624.494},{c:"South Africa",exp:496.6543,imp:132,tr:7434.944}];
 
             const speciesInfo = {
-                "Hippocampus abdominalis": { status: "LC", common: "Bigbelly seahorse" },
+                "Hippocampus abdominalis": { status: "LC", common: "Pot-bellied seahorse" },
                 "Hippocampus algiricus": { status: "VU", common: "West African seahorse" },
                 "Hippocampus angustus": { status: "LC", common: "Narrow-bellied seahorse" },
                 "Hippocampus barbouri": { status: "VU", common: "Barbour's seahorse" },
-                "Hippocampus bargibanti": { status: "LC", common: "Bargibant's pygmy seahorse" },
+                "Hippocampus bargibanti": { status: "LC", common: "Bargibant's seahorse" },
                 "Hippocampus breviceps": { status: "LC", common: "Short-head seahorse" },
                 "Hippocampus camelopardalis": { status: "DD", common: "Giraffe seahorse" },
                 "Hippocampus capensis": { status: "EN", common: "Knysna seahorse" },
-                "Hippocampus casscsio": { status: "DD", common: "Beibu Bay seahorse" },
+                "Hippocampus casscsio": { status: "DD", common: "Casscsio’s seahorse" },
                 "Hippocampus colemani": { status: "DD", common: "Coleman's pygmy seahorse" },
                 "Hippocampus coronatus": { status: "VU", common: "Crowned seahorse" },
                 "Hippocampus dahli": { status: "LC", common: "Lowcrown seahorse" },
                 "Hippocampus debelius": { status: "NT", common: "Softcoral seahorse" },
                 "Hippocampus denise": { status: "LC", common: "Denise's pygmy seahorse" },
-                "Hippocampus comes": { status: "VU", common: "Tiger tail seahorse" },
-                "Hippocampus erectus": { status: "VU", common: "Lined seahorse" },
+                "Hippocampus comes": { status: "EN", common: "Tiger tail seahorse" },
+                "Hippocampus erectus": { status: "NT", common: "Lined seahorse" },
                 "Hippocampus fisheri": { status: "LC", common: "Fisher's seahorse" },
-                "Hippocampus guttulatus": { status: "DD", common: "Long-snouted seahorse" },
+                "Hippocampus guttulatus": { status: "NT", common: "Long-snouted seahorse" },
                 "Hippocampus haema": { status: "VU", common: "Korean seahorse" },
-                "Hippocampus hippocampus": { status: "DD", common: "Short-snouted seahorse" },
+                "Hippocampus hippocampus": { status: "LC", common: "Short-snouted seahorse" },
                 "Hippocampus histrix": { status: "VU", common: "Thorny seahorse" },
-                "Hippocampus ingens": { status: "VU", common: "Pacific seahorse" },
-                "Hippocampus japapigu": { status: "LC", common: "Japan pig pygmy seahorse" },
+                "Hippocampus ingens": { status: "EN", common: "Giant seahorse" },
+                "Hippocampus japapigu": { status: "LC", common: "Japanese pygmy seahorse" },
                 "Hippocampus jayakari": { status: "LC", common: "Jayakar's seahorse" },
                 "Hippocampus jugumus": { status: "DD", common: "Collared seahorse" },
                 "Hippocampus kelloggi": { status: "DD", common: "Great seahorse" },
@@ -449,16 +472,16 @@
                 "Hippocampus mohnikei": { status: "VU", common: "Japanese seahorse" },
                 "Hippocampus nalu": { status: "NT", common: "Sodwana pygmy seahorse" },
                 "Hippocampus paradoxus": { status: "DD", common: "Paradoxical seahorse" },
-                "Hippocampus patagonicus": { status: "VU", common: "Patagonian seahorse" },
+                "Hippocampus patagonicus": { status: "EN", common: "Patagonian seahorse" },
                 "Hippocampus planifrons": { status: "LC", common: "Flatface seahorse" },
                 "Hippocampus pontohi": { status: "LC", common: "Pontoh's pgymy seahorse" },
-                "Hippocampus pusillus": { status: "LC", common: "Pgymy thorny seahorse" },
-                "Hippocampus reidi": { status: "NT", common: "Slender seahorse" },
-                "Hippocampus satomiae": { status: "DD", common: "Satomi's seahorse" },
+                "Hippocampus pusillus": { status: "LC", common: "Dwarf thorny seahorse" },
+                "Hippocampus reidi": { status: "VU", common: "Long-snout seahorse" },
+                "Hippocampus satomiae": { status: "LC", common: "Satomi's seahorse" },
                 "Hippocampus sindonis": { status: "LC", common: "Sindo's seahorse" },
                 "Hippocampus spinosissimus": { status: "VU", common: "Hedgehog seahorse" },
                 "Hippocampus subelongatus": { status: "DD", common: "Western Australian seahorse" },
-                "Hippocampus trimaculatus": { status: "VU", common: "Three-spot seahorse" },
+                "Hippocampus trimaculatus": { status: "EN", common: "Three-spot seahorse" },
                 "Hippocampus tyro": { status: "DD", common: "Tyro seahorse" },
                 "Hippocampus waleananus": { status: "CR", common: "Walea soft coral pygmy seahorse" },
                 "Hippocampus whitei": { status: "EN", common: "White's seahorse" },
@@ -467,18 +490,68 @@
             };
 
             const speciesDatabase = {
+                "Hippocampus algiricus": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Coastal areas with silt, mud, gravel, sand, seagrass, macroalgae, coral reefs and estuaries",
+                    threats: ["Habitat degradation", "Bycatch in trawl fisheries", "Trade"],
+                    trend: "Decreasing",
+                    size: 22
+                },
+                "Hippocampus nalu": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Sandy, sandstone-based coral reefs",
+                    threats: ["Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 2.2
+                },
+                "Hippocampus fisheri": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Pelagic waters",
+                    threats: ["Coastal development", "Land-based runoff"],
+                    trend: "Stable",
+                    size: 8
+                },
+                "Hippocampus patagonicus": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Algae, seagrass, artificial structures, sessile invertebrates and estuaries",
+                    threats: ["Trawl bycatch", "Habitat degradation", "Water pollution"],
+                    trend: "Decreasing",
+                    size: 15.5
+                },
+                "Hippocampus zosterae": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Seagrass bed and submerged vegetation",
+                    threats: ["Habitat degradation", "Trade"],
+                    trend: "Stable",
+                    size: 5.4
+                },
+"Hippocampus guttulatus": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Coastal lagoons, estuaries, seagrass meadows, macroalgae, rock reefs, artificial structures",
+                    threats: ["Bycatch", "Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 18
+                },
+"Hippocampus hippocampus": {
+                    desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
+                    habitat: "Soft sediment, rocky bottoms, seagrass meadows, macroalgae, artificial structures, lagoons and estuaries",
+                    threats: ["Bycatch", "Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 15
+                },
+
                 "Hippocampus abdominalis": {
                     desc: "One of the largest seahorse species, known for its prominent belly and long, prehensile tail. They are strong swimmers compared to other seahorses.",
-                    habitat: "Coastal waters, harbors, and rocky reefs amongst macroalgae and seagrasses.",
+                    habitat: "Coastal waters, harbors, and rocky reefs amongst macroalgae and seagrasses",
                     threats: ["Habitat degradation", "Bycatch in trawl fisheries", "Aquarium trade"],
                     trend: "Stable",
                     size: 35
                 },
                 "Hippocampus bargibanti": {
                     desc: "A tiny, master of camouflage, this pygmy seahorse lives exclusively on Muricella gorgonian fans.",
-                    habitat: "Coral reefs, specifically on Muricella gorgonian sea fans.",
+                    habitat: "Coral reefs, specifically on Muricella gorgonian sea fans",
                     threats: ["Coral reef destruction", "Climate change", "Recreational diving disturbance"],
-                    trend: "Unknown",
+                    trend: "Decreasing",
                     size: 2.4
                 },
                 "Hippocampus capensis": {
@@ -490,46 +563,92 @@
                 },
                 "Hippocampus comes": {
                     desc: "Commonly known as the Tiger tail seahorse due to its striped tail. Nocturnal and social.",
-                    habitat: "Coral reefs, sponge gardens, seagrass beds.",
-                    threats: ["Traditional medicine trade", "Aquarium trade", "Bycatch"],
+                    habitat: "Coral reefs, sponge gardens, macroalgal beds, seagrass, rocky reefs, sandy and muddy bottoms, and artificial structures",
+                    threats: ["Traditional medicine trade", "Aquarium trade", "Bycatch", "Habitat degradation"],
                     trend: "Decreasing",
                     size: 18.7
                 },
+                "Hippocampus denise": {
+                    desc: "TBD",
+                    habitat: "Gorgonian corals",
+                    threats: ["Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 2.4
+                },
+"Hippocampus haema": {
+                    desc: "TBD",
+                    habitat: "Seagrass and seaweed",
+                    threats: ["Bycatch", "Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 10
+                },
+"Hippocampus japapigu": {
+                    desc: "TBD.",
+                    habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids",
+                    threats: ["Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 1.6
+                },
+"Hippocampus satomiae": {
+                    desc: "TBD.",
+                    habitat: "Gorgonian and soft corals",
+                    threats: ["Habitat degradation", "Destructive fishing practice"],
+                    trend: "Decreasing",
+                    size: 1.4
+                },
+
                 "Hippocampus erectus": {
                     desc: "The Lined Seahorse is a hardy species found in the Atlantic. Varies greatly in color.",
-                    habitat: "Seagrass, mangroves, coral reefs, floating Sargassum.",
-                    threats: ["Shrimp trawl bycatch", "Coastal development", "Trade"],
+                    habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating Sargassum, and sponges",
+                    threats: ["Trawl bycatch", "Habitat degradation", "Trade"],
                     trend: "Decreasing",
-                    size: 19
+                    size: 18.5
                 },
                 "Hippocampus ingens": {
-                    desc: "The Pacific Seahorse is the only seahorse species found in the Eastern Pacific.",
-                    habitat: "Deep water, gorgonians, seagrass.",
-                    threats: ["Intense bycatch", "Curio trade"],
+                    desc: "The Pacific Seahorse is the only seahorse species found in the Eastern Pacific",
+                    habitat: "Mangroves, macroalgae, seagrass and coral reefs",
+                    threats: ["Trawl and gillnet bycatch", "Trade", "Habitat degradation"],
                     trend: "Decreasing",
                     size: 30
                 },
                 "Hippocampus kuda": {
                     desc: "The Spotted Seahorse is widely distributed in the Indo-Pacific. heavily traded.",
-                    habitat: "Estuaries, seagrass, mangroves, muddy bottoms.",
+                    habitat: "Estuaries, seagrass, mangroves, muddy bottoms",
                     threats: ["Targeted trade for medicine", "Bycatch"],
                     trend: "Decreasing",
                     size: 30
                 },
                 "Hippocampus reidi": {
                     desc: "The Slender Seahorse is known for its long snout and variety of colors.",
-                    habitat: "Mangroves, seagrass, gorgonians, piers.",
-                    threats: ["Aquarium trade", "Habitat loss"],
+                    habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrasses, estuaries, and especially on macroalgae, mangroves, sandy and muddy bottoms, and on artificial structures",
+                    threats: ["Trawl bycatch", "Trade", "Habitat degradation", "Tourism activities"],
                     trend: "Decreasing",
-                    size: 17.5
+                    size: 23
                 },
                 "Hippocampus trimaculatus": {
                     desc: "Named for the three spots on its back. Often found in deeper waters.",
-                    habitat: "Gravel/sand bottoms >10m.",
-                    threats: ["Trawl bycatch (major threat)", "Trade"],
+                    habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed",
+                    threats: ["Trawl bycatch", "Trade", "Habitat degradation"],
                     trend: "Decreasing",
-                    size: 22
+                    size: 18.6
                 },
+
+                "Hippocampus waleananus": {
+                    desc: "TBD",
+                    habitat: "Soft corals",
+                    threats: ["Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 1.8
+                },
+
+                "Hippocampus debelius": {
+                    desc: "TBD",
+                    habitat: "Soft corals",
+                    threats: ["Habitat degradation"],
+                    trend: "Decreasing",
+                    size: 3.5
+                },
+
                 "Hippocampus whitei": {
                     desc: "White's Seahorse is endemic to Australia. It has adapted to artificial structures.",
                     habitat: "Seagrass, sponge gardens, protective swimming nets.",
@@ -565,15 +684,25 @@
                     defaultPopupTemplateEnabled: false
                 }
             });
-
             // --- API & HELPER FUNCTIONS ---
             async function fetchSpeciesImage(scientificName) {
-                if (manualImageOverrides[scientificName]) {
-                    return {
-                        url: manualImageOverrides[scientificName],
-                        attribution: "Image provided by user"
-                    };
-                }
+if (manualImageOverrides[scientificName]) {
+    const override = manualImageOverrides[scientificName];
+
+    // If user still uses old string-only style, keep backward compatibility:
+    if (typeof override === "string") {
+        return {
+            url: override,
+            attribution: "Image provided by user"
+        };
+    }
+
+    // New structured format with per-image credits:
+    return {
+        url: override.url,
+        attribution: override.attribution || "Image provided by user"
+    };
+}
                 try {
                     const url = `https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(scientificName)}&per_page=1`;
                     const response = await fetch(url);
@@ -677,7 +806,7 @@
                 panel.classList.add('active');
                 header.innerHTML = `
                 <h2 class="detail-title">Global Illegal Trade</h2>
-                <p class="detail-subtitle">Number of seahorses seized by country</p>
+                <p class="detail-subtitle">XXXXXXX by jurisdiction</p>
                 `;
 
                 const sorted = [...seizureData].sort((a, b) => (b.exp + b.imp + b.tr) - (a.exp + a.imp + a.tr));
@@ -741,7 +870,7 @@
                 if (!targetCountry) {
                     header.innerHTML = `
                     <h2 class="detail-title">Reported catch</h2>
-                    <p class="detail-subtitle">Select a country to view gear</p>
+                    <p class="detail-subtitle">Select a jurisdiction to view gear</p>
                     `;
                     const uniqueCountries = [...new Set(catchData.map(d => d.country))];
                     const countryStats = uniqueCountries.map(c => {
@@ -760,7 +889,6 @@
                     `).join('');
 
                     body.innerHTML = `
-                    <div style="margin-bottom:15px; font-size:13px; color:rgba(255,255,255,0.6);">Countries by diversity:</div>
                     <div id="countryListContainer" style="background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden;">${listHtml}</div>
                     `;
                     
