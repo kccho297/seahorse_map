@@ -869,15 +869,23 @@ async function fetchSpeciesImage(scientificName) {
     // Default IUCN search page if no manual link
     const defaultIucnLink = `https://www.iucnredlist.org/search?query=${encodeURIComponent(scientificName)}`;
 
-    if (!override) return { url: "", attribution: "", link: defaultIucnLink };
+    // Placeholder image if no specific image
+    const placeholderImage = "https://t3.ftcdn.net/jpg/10/22/24/80/360_F_1022248039_7LDxHRi3Mlt9BK3wzLBUGZp9XAO1gt2s.jpg";
+
+    if (!override) {
+        return { 
+            url: placeholderImage, 
+            attribution: "Image not available", 
+            link: defaultIucnLink 
+        };
+    }
 
     return {
-        url: override.url,
+        url: override.url || placeholderImage,
         attribution: override.attribution || "Image not available",
         link: override.iucnLink || defaultIucnLink
     };
-}
-function renderSpeciesImage(img) {
+}function renderSpeciesImage(img) {
     if (!img) return "";
 
     const imageTag = `
