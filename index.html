@@ -1189,7 +1189,7 @@ let imageHTML = imageData ?
                             "Hippocampus erectus": "#ca72a6", "Hippocampus fisheri": "#74a2dd",
                             "Hippocampus ingens": "#ed7a7d", "Hippocampus patagonicus": "#94dbde",
                             "Hippocampus reidi": "#88cf99", "Hippocampus zosterae": "#b882e1",
-                            "Hippocampus denise": "#fcec7d", "Reported catch countries": "#a8a8a8",
+                            "Hippocampus denise": "#fcec7d", "Reported catch jurisdictions": "#a8a8a8",
                             "Seahorse seizures": "#a8a8a8"
                         };
                         const color = customSymbols[layer.title] || "#ccc";
@@ -1197,7 +1197,7 @@ let imageHTML = imageData ?
                         else symbol.style.backgroundColor = color;
 
                         // Set Initial Visibility Rules
-                        if (layer.title === "Reported catch countries") {
+                        if (layer.title === "Reported catch jurisdictions") {
                             layer.opacity = 0.6;
                             layer.visible = true;
                         } else if (layer.title !== "Ocean Basemap" && layer.title !== "World Hillshade" && layer.title !== "Seahorse seizures") {
@@ -1311,7 +1311,7 @@ let imageHTML = imageData ?
 
                             if (["Exporter", "Importer", "Transit", "Seahorse seizures"].includes(layer.title)) {
                                 showTradeData();
-                            } else if (layer.title === "Reported catch countries") {
+                            } else if (layer.title === "Reported catch jurisdictions") {
                                 showCatchData(null);
                             } else if (speciesInfo[layer.title]) {
                                 const info = speciesInfo[layer.title];
@@ -1367,14 +1367,14 @@ let imageHTML = imageData ?
                         const t = g.layer.title;
                         return speciesInfo[t] ||
                             ["Exporter", "Importer", "Transit", "Seahorse seizures"].includes(t) ||
-                            t === "Reported catch countries";
+                            t === "Reported catch jurisdictions";
                     });
                     if (hit) {
                         const title = hit.graphic.layer.title;
                         if (speciesInfo[title]) {
                             const info = speciesInfo[title];
                             fetchAndShowDetails(title, info.common, info.status);
-                        } else if (title === "Reported catch countries") {
+                        } else if (title === "Reported catch jurisdictions") {
                             const attr = hit.graphic.attributes;
                             const candidates = [attr.country, attr.Country, attr.COUNTRY, attr.name, attr.Name, attr.NAME, attr.cntry_name, attr.CNTRY_NAME, attr.Cntry_Name, attr.sovereignt, attr.SOVEREIGNT, attr.admin, attr.ADMIN];
                             const country = candidates.find(c => c && typeof c === 'string');
