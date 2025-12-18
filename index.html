@@ -693,7 +693,9 @@ depth: "94-110"
                     habitat: "Rock pools, shallow algae, and weedy or rubble reefs",
                     threats: ["Habitat degradation"],
                     trend: "Stable",
-                    size: 11.6
+                    size: 11.6,
+depth: "0-20"
+
                 },
                 "Hippocampus subelongatus": {
          
@@ -710,7 +712,9 @@ depth: "0-25"
                     habitat: "Soft bottoms, black corals, and gorgonians",
                     threats: ["Habitat degradation", "Bycatch"],
                     trend: "Stable",
-                    size: 9
+                    size: 9,
+depth: "0-20"
+
                 },
 
                 "Hippocampus bargibanti": {
@@ -869,7 +873,7 @@ async function fetchSpeciesImage(scientificName) {
 
     return {
         url: override.url,
-        attribution: override.attribution || "Image provided by user",
+        attribution: override.attribution || "Image not available",
         link: override.iucnLink || defaultIucnLink
     };
 }
