@@ -9,7 +9,6 @@
     /* --- ROOT VARIABLES --- */
     .seahorse-map-container {
         --brand-blue: #0367a1;
-        /* Semi-transparent background for KCC Glass Effect */
         --panel-bg: rgba(3, 103, 161, 0.90); 
         --panel-border: rgba(255, 255, 255, 0.2);
         --text-main: #ffffff;
@@ -23,23 +22,23 @@
         width: 100%;
         margin: 0;
         padding: 0;
-        /* Container now defines the height for the floating elements context */
         height: 600px; 
-        overflow: hidden; /* Keeps floating elements contained */
+        overflow: hidden;
     }
 
     /* --- LAYOUT SPECS --- */
     #viewDiv {
         width: 100%;
-        height: 100%; /* Fills container */
+        height: 100%;
         position: absolute;
         top: 0;
         left: 0;
         background-color: var(--brand-blue);
         z-index: 0;
+        outline: none;
     }
 
-    /* --- LEGEND SIDEBAR (KCC STYLING APPLIED) --- */
+    /* --- LEGEND SIDEBAR --- */
     #legendSidebar {
         position: absolute;
         z-index: 10;
@@ -48,43 +47,33 @@
         display: flex;
         flex-direction: column;
         transition: all 0.3s ease;
-        
-        /* KCC Styling: Rounded Corners & Borders */
         border: 1px solid var(--panel-border);
         border-radius: 12px; 
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-
-        /* Mobile Default: Bottom sheet style or below map? 
-           To keep "Inside Map" feel on mobile, we position it at bottom-right or 
-           let it sit below if screen is too small. 
-           Here we use a responsive approach. */
         width: 90%;
         left: 5%;
         bottom: 20px;
         top: auto;
         right: auto;
-        height: 40%; /* Short on mobile */
+        height: 40%;
     }
 
     /* --- DETAIL PANEL --- */
     #detailPanel {
         position: absolute;
         top: 20px;
-        left: 20px; /* Floating with padding */
+        left: 20px;
         width: calc(100% - 40px);
         max-width: 400px;
-        height: calc(100% - 40px); /* Floating with padding */
+        height: calc(100% - 40px);
         background-color: var(--panel-bg);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid var(--panel-border);
-        
-        /* KCC Styling */
         border-radius: 12px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        
         z-index: 20;
         transform: translateX(-120%);
         transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
@@ -118,9 +107,9 @@
     .sidebar-header {
         padding: 18px;
         border-bottom: 1px solid var(--panel-border);
-        background: rgba(0, 0, 0, 0.1); /* Softer header */
+        background: rgba(0, 0, 0, 0.1);
         flex-shrink: 0;
-        border-radius: 12px 12px 0 0; /* Round top corners */
+        border-radius: 12px 12px 0 0;
     }
 
     .search-wrapper {
@@ -172,7 +161,6 @@
         flex: 1;
         overflow-y: auto; 
         padding: 14px 10px;
-        /* Round bottom corners of scroll area if needed, mostly handled by container */
     }
 
     .legend-item {
@@ -183,12 +171,20 @@
         margin-bottom: 4px;
         border-radius: 8px;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all 0.2s ease;
         border: 1px solid transparent;
+        position: relative;
     }
     .legend-item:hover {
         background-color: rgba(255, 255, 255, 0.1);
         border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* --- NEW INTERACTIVE HOVER EFFECT --- */
+    .legend-item.interactive:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .legend-label-container {
@@ -313,28 +309,59 @@
         background: rgba(0, 0, 0, 0.4); position: relative; border: 1px solid var(--panel-border);
         display: flex; align-items: center; justify-content: center;
     }
-    .species-image { width: 100%; height: 100%; object-fit: contain; display: block; opacity: 0; transition: opacity 0.5s; }
+    .species-image { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.5s; }
     .species-image.loaded { opacity: 1; }
     .image-credit {
         position: absolute; bottom: 0; right: 0; background: rgba(0, 0, 0, 0.7);
         color: rgba(255, 255, 255, 0.9); font-size: 10px; padding: 4px 8px;
         border-top-left-radius: 6px; backdrop-filter: blur(2px);
     }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
     .info-box { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--panel-border); border-radius: 8px; padding: 10px; }
-    .info-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px; }
-    .info-value { font-size: 14px; color: var(--text-main); font-weight: 600; }
+    .info-label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: 600;  }
+    .info-value { font-size: 12px; color: var(--text-main); font-weight: 400; }
     .section-title {
-        font-size: 12px; font-weight: 700; color: #60a5fa; text-transform: uppercase;
+        font-size: 12px; font-weight: 700; color: #ffffff; text-transform: uppercase;
         margin: 24px 0 10px 0; display: flex; align-items: center; gap: 8px;
     }
     .section-title::after { content: ''; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2); }
     .text-body { font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+    
+    /* REVISED THREAT ITEM */
     .threat-item {
         display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 13px;
         color: var(--text-main); background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 6px;
     }
-    .threat-dot { width: 6px; height: 6px; background: var(--danger); border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .threat-icon {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        color: var(--accent-gold);
+        margin-top: 1px;
+    }
+
+    /* REVISED CATCH LIST CARD */
+    .country-card {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 12px; margin-bottom: 8px; border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08); 
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer; transition: all 0.2s ease;
+    }
+    .country-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(4px);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    .country-name { font-size: 14px; font-weight: 500; color: #fff; }
+    .country-meta { display: flex; align-items: center; gap: 10px; }
+    .count-badge {
+        background: rgba(3, 103, 161, 0.4); border: 1px solid #0367a1;
+        color: #fbbf24; padding: 2px 8px; border-radius: 12px;
+        font-size: 11px; font-weight: 700;
+    }
+    .card-chevron { color: rgba(255, 255, 255, 0.3); font-size: 12px; }
+
     .chart-row { display: flex; align-items: center; margin-bottom: 10px; font-size: 12px; }
     .chart-label { width: 100px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 10px; text-align: right; flex-shrink: 0; }
     .chart-bar-wrapper { flex: 1; height: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 4px; overflow: hidden; display: flex; }
@@ -347,28 +374,13 @@
 
     /* --- RESPONSIVE BREAKPOINT (Desktop) --- */
     @media only screen and (min-width:768px) {
-        /* Map stays full width */
-        #viewDiv {
-            width: 100%; 
-        }
-        
-        /* Sidebar floats INSIDE the map on Desktop */
+        #viewDiv { width: 100%; }
         #legendSidebar {
-            top: 20px;
-            right: 20px;
-            left: auto; /* Reset mobile left */
-            bottom: auto; /* Reset mobile bottom */
-            width: 310px;
-            height: auto;
-            max-height: calc(100% - 40px); /* Constrain height with padding */
-            
-            /* Styling ensures it looks like a KCC card */
+            top: 20px; right: 20px; left: auto; bottom: auto;
+            width: 310px; height: auto; max-height: calc(100% - 40px);
             border-radius: 12px; 
         }
-        
-        #loadingDiv {
-            width: 100%;
-        }
+        #loadingDiv { width: 100%; }
     }
 </style>
 
@@ -414,122 +426,39 @@
             // --- DATASETS ---
             const catchData = [{country:"Argentina",gear:"Bottom trawls (nei)",count:1},{country:"Argentina",gear:"Diving",count:1},{country:"Argentina",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Australia",gear:"Bottom trawls (nei)",count:10},{country:"Australia",gear:"Diving",count:3},{country:"Australia",gear:"Gear nei",count:1},{country:"Azores Islands (Portugal)",gear:"Gear not known",count:1},{country:"Bangladesh",gear:"Bottom trawls (nei)",count:1},{country:"Bangladesh",gear:"Pushnets",count:1},{country:"Bangladesh",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Bangladesh",gear:"Stationary uncovered pound nets",count:1},{country:"Belgium",gear:"Bottom trawls (nei)",count:1},{country:"Belgium",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Belgium",gear:"Traps (nei)",count:1},{country:"Belgium",gear:"Gear not known",count:1},{country:"Belize",gear:"Bottom trawls (nei)",count:1},{country:"Belize",gear:"Diving",count:1},{country:"Brazil",gear:"Bottom trawls (nei)",count:14},{country:"Brazil",gear:"Diving",count:5},{country:"Brazil",gear:"Gear nei",count:4},{country:"Brazil",gear:"Beach seines",count:3},{country:"Brazil",gear:"Cast nets",count:3},{country:"Brazil",gear:"Gillnets and entangling nets (nei)",count:2},{country:"Brazil",gear:"Set gillnets (anchored)",count:2},{country:"Brazil",gear:"Barriers, fences, weirs, etc.",count:2},{country:"Brazil",gear:"Gear not known",count:2},{country:"Brazil",gear:"Seine nets (nei)",count:1},{country:"Brazil",gear:"Pots",count:1},{country:"Cambodia",gear:"Bottom trawls (nei)",count:2},{country:"Cambodia",gear:"Gear nei",count:1},{country:"Cambodia",gear:"Pushnets",count:1},{country:"Cambodia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Cambodia",gear:"Fyke nets",count:1},{country:"Cambodia",gear:"Pots",count:1},{country:"Cambodia",gear:"Traps (nei)",count:1},{country:"Chile",gear:"Bottom trawls (nei)",count:1},{country:"China",gear:"Bottom trawls (nei)",count:4},{country:"China",gear:"Gear not known",count:2},{country:"China",gear:"Gillnets and entangling nets (nei)",count:1},{country:"China",gear:"Cast nets",count:1},{country:"Costa Rica",gear:"Diving",count:2},{country:"Costa Rica",gear:"Bottom trawls (nei)",count:1},{country:"Costa Rica",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Croatia",gear:"Gear not known",count:1},{country:"Ecuador",gear:"Bottom trawls (nei)",count:2},{country:"Ecuador",gear:"Diving",count:2},{country:"Ecuador",gear:"Beach seines",count:1},{country:"Ecuador",gear:"Purse seines",count:1},{country:"France",gear:"Bottom trawls (nei)",count:3},{country:"France",gear:"Stationary uncovered pound nets",count:1},{country:"Gambia",gear:"Bottom trawls (nei)",count:2},{country:"Gambia",gear:"Diving",count:1},{country:"Gambia",gear:"Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)",count:1},{country:"Gambia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Gambia",gear:"Set gillnets (anchored)",count:1},{country:"Gambia",gear:"Beach seines",count:1},{country:"Gambia",gear:"Seine nets (nei)",count:1},{country:"Gambia",gear:"Pots",count:1},{country:"Gambia",gear:"Traps (nei)",count:1},{country:"Gambia",gear:"Cast nets",count:1},{country:"Gambia",gear:"Handlines and hand-operated pole-and-lines",count:1},{country:"Germany",gear:"Traps (nei)",count:3},{country:"Germany",gear:"Bottom trawls (nei)",count:1},{country:"Greece",gear:"Bottom trawls (nei)",count:2},{country:"Greece",gear:"Boat seines",count:1},{country:"Guatemala",gear:"Bottom trawls (nei)",count:2},{country:"Guatemala",gear:"Trammel nets",count:1},{country:"Honduras",gear:"Bottom trawls (nei)",count:2},{country:"Honduras",gear:"Trammel nets",count:1},{country:"Honduras",gear:"Seine nets (nei)",count:1},{country:"Hong Kong SAR",gear:"Gear not known",count:1},{country:"India",gear:"Bottom trawls (nei)",count:10},{country:"India",gear:"Diving",count:5},{country:"India",gear:"Gear nei",count:3},{country:"India",gear:"Gillnets and entangling nets (nei)",count:3},{country:"India",gear:"Beach seines",count:3},{country:"India",gear:"Seine nets (nei)",count:2},{country:"India",gear:"Traps (nei)",count:2},{country:"India",gear:"Surrounding nets (nei)",count:2},{country:"India",gear:"Drift gillnets",count:1},{country:"India",gear:"Set gillnets (anchored)",count:1},{country:"India",gear:"Trammel nets",count:1},{country:"India",gear:"Barriers, fences, weirs, etc.",count:1},{country:"India",gear:"Cast nets",count:1},{country:"India",gear:"Falling gear (nei)",count:1},{country:"India",gear:"Purse seines",count:1},{country:"India",gear:"Hooks and lines (nei)",count:1},{country:"Indonesia",gear:"Bottom trawls (nei)",count:3},{country:"Indonesia",gear:"Diving",count:3},{country:"Indonesia",gear:"Gear not known",count:3},{country:"Indonesia",gear:"Gear nei",count:2},{country:"Indonesia",gear:"Pushnets",count:2},{country:"Indonesia",gear:"Beach seines",count:2},{country:"Indonesia",gear:"Scoopnets",count:1},{country:"Indonesia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Indonesia",gear:"Barriers, fences, weirs, etc.",count:1},{country:"Indonesia",gear:"Pots",count:1},{country:"Indonesia",gear:"Cast nets",count:1},{country:"Indonesia",gear:"Purse seines",count:1},{country:"Indonesia",gear:"Lift nets (nei)",count:1},{country:"Italy",gear:"Bottom trawls (nei)",count:3},{country:"Italy",gear:"Gear nei",count:3},{country:"Italy",gear:"Gear not known",count:3},{country:"Italy",gear:"Beach seines",count:2},{country:"Italy",gear:"Harpoons",count:1},{country:"Italy",gear:"Trammel nets",count:1},{country:"Italy",gear:"Pots",count:1},{country:"Italy",gear:"Purse seines",count:1},{country:"Japan",gear:"Bottom trawls (nei)",count:1},{country:"Kenya",gear:"Bottom trawls (nei)",count:1},{country:"Kenya",gear:"Diving",count:1},{country:"Kenya",gear:"Seine nets (nei)",count:1},{country:"Kenya",gear:"Cast nets",count:1},{country:"Kenya",gear:"Purse seines",count:1},{country:"Kuwait",gear:"Bottom trawls (nei)",count:1},{country:"Malaysia",gear:"Bottom trawls (nei)",count:10},{country:"Malaysia",gear:"Drift gillnets",count:4},{country:"Malaysia",gear:"Gear nei",count:3},{country:"Malaysia",gear:"Cast nets",count:3},{country:"Malaysia",gear:"Purse seines",count:3},{country:"Malaysia",gear:"Diving",count:1},{country:"Malaysia",gear:"Pushnets",count:1},{country:"Malaysia",gear:"Scoopnets",count:1},{country:"Malaysia",gear:"Trammel nets",count:1},{country:"Malaysia",gear:"Seine nets (nei)",count:1},{country:"Malaysia",gear:"Barriers, fences, weirs, etc.",count:1},{country:"Malaysia",gear:"Pots",count:1},{country:"Malaysia",gear:"Stationary uncovered pound nets",count:1},{country:"Malaysia",gear:"Stow nets",count:1},{country:"Malaysia",gear:"Traps (nei)",count:1},{country:"Malaysia",gear:"Hooks and lines (nei)",count:1},{country:"Mexico",gear:"Bottom trawls (nei)",count:4},{country:"Mexico",gear:"Diving",count:3},{country:"Mexico",gear:"Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)",count:1},{country:"Mexico",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Mexico",gear:"Set gillnets (anchored)",count:1},{country:"Mexico",gear:"Beach seines",count:1},{country:"Mexico",gear:"Boat seines",count:1},{country:"Mexico",gear:"Pots",count:1},{country:"Mexico",gear:"Cast nets",count:1},{country:"Mozambique",gear:"Beach seines",count:1},{country:"Mozambique",gear:"Purse seines",count:1},{country:"Netherlands",gear:"Bottom trawls (nei)",count:1},{country:"New Zealand",gear:"Bottom trawls (nei)",count:2},{country:"New Zealand",gear:"Longlines (nei)",count:1},{country:"Nicaragua",gear:"Bottom trawls (nei)",count:2},{country:"Nicaragua",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Nigeria",gear:"Bottom trawls (nei)",count:1},{country:"Norway",gear:"Bottom trawls (nei)",count:1},{country:"Norway",gear:"Pots",count:1},{country:"Oman",gear:"Traps (nei)",count:1},{country:"Pakistan",gear:"Bottom trawls (nei)",count:1},{country:"Pakistan",gear:"Diving",count:1},{country:"Pakistan",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Panama",gear:"Diving",count:2},{country:"Panama",gear:"Bottom trawls (nei)",count:1},{country:"Peru",gear:"Bottom trawls (nei)",count:3},{country:"Peru",gear:"Diving",count:3},{country:"Peru",gear:"Gillnets and entangling nets (nei)",count:3},{country:"Peru",gear:"Set gillnets (anchored)",count:1},{country:"Peru",gear:"Trammel nets",count:1},{country:"Peru",gear:"Purse seines",count:1},{country:"Philippines",gear:"Diving",count:10},{country:"Philippines",gear:"Bottom trawls (nei)",count:5},{country:"Philippines",gear:"Gear nei",count:5},{country:"Philippines",gear:"Pushnets",count:4},{country:"Philippines",gear:"Beach seines",count:2},{country:"Philippines",gear:"Seine nets (nei)",count:2},{country:"Philippines",gear:"Barriers, fences, weirs, etc.",count:2},{country:"Philippines",gear:"Pots",count:2},{country:"Philippines",gear:"Drift gillnets",count:1},{country:"Philippines",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Philippines",gear:"Set gillnets (anchored)",count:1},{country:"Philippines",gear:"Boat seines",count:1},{country:"Philippines",gear:"Traps (nei)",count:1},{country:"Philippines",gear:"Cover pots/Lantern nets",count:1},{country:"Philippines",gear:"Gear not known",count:1},{country:"Portugal",gear:"Bottom trawls (nei)",count:2},{country:"Portugal",gear:"Beach seines",count:2},{country:"Portugal",gear:"Pushnets",count:1},{country:"Portugal",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Portugal",gear:"Trammel nets",count:1},{country:"Portugal",gear:"Pots",count:1},{country:"Portugal",gear:"Traps (nei)",count:1},{country:"Senegal",gear:"Bottom trawls (nei)",count:2},{country:"Senegal",gear:"Diving",count:1},{country:"Senegal",gear:"Hand implements (Wrenching gear, Clamps, Tongs, Rakes, Spears)",count:1},{country:"Senegal",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Senegal",gear:"Set gillnets (anchored)",count:1},{country:"Senegal",gear:"Beach seines",count:1},{country:"Senegal",gear:"Seine nets (nei)",count:1},{country:"Senegal",gear:"Pots",count:1},{country:"Senegal",gear:"Traps (nei)",count:1},{country:"Senegal",gear:"Cast nets",count:1},{country:"Senegal",gear:"Handlines and hand-operated pole-and-lines",count:1},{country:"South Korea",gear:"Seine nets (nei)",count:1},{country:"South Korea",gear:"Purse seines",count:1},{country:"South Korea",gear:"Gear not known",count:1},{country:"Spain",gear:"Gear nei",count:2},{country:"Spain",gear:"Bottom trawls (nei)",count:1},{country:"Spain",gear:"Seine nets (nei)",count:1},{country:"Spain",gear:"Gear not known",count:1},{country:"Sri Lanka",gear:"Bottom trawls (nei)",count:1},{country:"Sri Lanka",gear:"Gear nei",count:1},{country:"Sri Lanka",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Sri Lanka",gear:"Fyke nets",count:1},{country:"Sweden",gear:"Pots",count:1},{country:"Taiwan",gear:"Bottom trawls (nei)",count:1},{country:"Taiwan",gear:"Gear not known",count:1},{country:"Tanzania",gear:"Bottom trawls (nei)",count:2},{country:"Tanzania",gear:"Gear nei",count:2},{country:"Tanzania",gear:"Seine nets (nei)",count:2},{country:"Tanzania",gear:"Purse seines",count:2},{country:"Tanzania",gear:"Diving",count:1},{country:"Tanzania",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Tanzania",gear:"Beach seines",count:1},{country:"Tanzania",gear:"Pots",count:1},{country:"Tanzania",gear:"Traps (nei)",count:1},{country:"Tanzania",gear:"Cast nets",count:1},{country:"Tanzania",gear:"Surrounding nets (nei)",count:1},{country:"Thailand",gear:"Bottom trawls (nei)",count:7},{country:"Thailand",gear:"Gillnets and entangling nets (nei)",count:4},{country:"Thailand",gear:"Pushnets",count:3},{country:"Thailand",gear:"Diving",count:2},{country:"Thailand",gear:"Pots",count:1},{country:"Thailand",gear:"Purse seines",count:1},{country:"Tunisia",gear:"Gillnets and entangling nets (nei)",count:1},{country:"Tunisia",gear:"Dredges (nei)",count:1},{country:"Turkey",gear:"Bottom trawls (nei)",count:5},{country:"Turkey",gear:"Gillnets and entangling nets (nei)",count:4},{country:"Turkey",gear:"Gear nei",count:2},{country:"Turkey",gear:"Purse seines",count:2},{country:"Turkey",gear:"Gear not known",count:2},{country:"Turkey",gear:"Beach seines",count:1},{country:"United Arab Emirates",gear:"Midwater trawls (nei)",count:1},{country:"United Kingdom",gear:"Bottom trawls (nei)",count:2},{country:"United Kingdom",gear:"Gillnets and entangling nets (nei)",count:1},{country:"United Kingdom",gear:"Pots",count:1},{country:"United States",gear:"Bottom trawls (nei)",count:5},{country:"United States",gear:"Beach seines",count:2},{country:"United States",gear:"Gillnets and entangling nets (nei)",count:1},{country:"United States",gear:"Gear not known",count:1},{country:"Uruguay",gear:"Fyke nets",count:1},{country:"Viet Nam",gear:"Bottom trawls (nei)",count:9},{country:"Viet Nam",gear:"Diving",count:6},{country:"Viet Nam",gear:"Electric fishing",count:1},{country:"Viet Nam",gear:"Set gillnets (anchored)",count:1},{country:"Viet Nam",gear:"Boat seines",count:1},{country:"Viet Nam",gear:"Pots",count:1},{country:"Viet Nam",gear:"Traps (nei)",count:1}];
             const gearColors = ["#3b82f6", "#06b6d4", "#14b8a6", "#84cc16", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#6366f1", "#9ca3af"];
+            
             const manualImageOverrides = { 
-"Hippocampus zosterae": {
-url: "https://static.inaturalist.org/photos/1164927/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10089/46910143",
-attribution: "Kent Miller / iNaturalist"},
-"Hippocampus abdominalis": {
-url: "https://static.inaturalist.org/photos/1164927/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10057/54903879",
-attribution: "D. Maynard / iNaturalist"},
-"Hippocampus patagonicus": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/165496598/original.jpg",
-iucnLink: "https://www.iucnredlist.org/species/195100/54909767",
-attribution: "Gonzalo Bravo / iNaturalist"},
-"Hippocampus subelongatus": {
-url: "https://static.inaturalist.org/photos/1873652/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/40773/54906710",
-attribution: "Daniël Messom/ iNaturalist"},
-"Hippocampus whitei": {
-url: "https://static.inaturalist.org/photos/12009596/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10088/46721312",
-attribution: "Samantha De Smet / iNaturalist"},
-"Hippocampus erectus": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/391235678/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10066/20191442",
-attribution: "Pauline Walsh Jacobson / iNaturalist"},
-"Hippocampus dahli": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/391235678/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/101729662/103206102",
-attribution: "Pauline Walsh Jacobson / iNaturalist"},
-"Hippocampus algiricus": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/592647296/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/41007/54907846",
-attribution: "Dennis Rabeling / iNaturalist"},
-"Hippocampus ingens": {
-url: "https://static.inaturalist.org/photos/12112505/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10072/54905720",
-attribution: "Joshua Feingold / iNaturalist"},
-"Hippocampus hippocampus": {
-url: "https://static.inaturalist.org/photos/49805056/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10069/67618259",
-attribution: "Janny Bosman / iNaturalist"},
-"Hippocampus bargibanti": {
-url: "https://static.inaturalist.org/photos/49731161/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10060/250508253",
-attribution: "Marc Van Buynder / iNaturalist"},
-"Hippocampus denise": {
-url: "https://static.inaturalist.org/photos/49840052/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/41716/247789834",
-attribution: "Valerie Debruyne / iNaturalist"},
-"Hippocampus satomiae": {
-url: "https://static.inaturalist.org/photos/49629697/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/250584311/250593114",
-attribution: "Barbara Moll / iNaturalist"},
-"Hippocampus nalu": {
-url: "https://static.inaturalist.org/photos/49833424/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/250584311/250593114",
-attribution: "Pedro Ferreira / iNaturalist"},
-"Hippocampus comes": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/336623495/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/41008/128958172",
-attribution: "Franck Fogarolo / iNaturalist"},
-"Hippocampus fisheri": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/336623503/medium.jpg",
-iucnLink: "https://www.iucnredlist.org/species/41009/54908481",
-attribution: "Boris Mekler / iNaturalist"},
-"Hippocampus reidi": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/336623503/medium.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10082/17025021",
-attribution: "Ernst Seeling / iNaturalist"},
-"Hippocampus haema": {
-url: "https://static.inaturalist.org/photos/49634367/medium.jpg",
-iucnLink: "https://www.iucnredlist.org/species/250584055/250593104",
-attribution: "Zhang Jinggong / iNaturalist"},
-"Hippocampus japapigu": {
-url: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Hippocampus_japapigu_%2810.3897-zookeys.779.24799%29_Figure_4.jpg",
-iucnLink: "https://www.iucnredlist.org/species/250584194/250593109",
-attribution: "Richard Smith / iNaturalist"},
-"Hippocampus trimaculatus": {
-url: "https://static.inaturalist.org/photos/49835402/medium.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10087/17252219",
-attribution: "Caron Wong / iNaturalist"},
+                "Hippocampus zosterae": {url: "https://static.inaturalist.org/photos/1164927/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10089/46910143", attribution: "Kent Miller / iNaturalist"},
+                "Hippocampus abdominalis": {url: "https://static.inaturalist.org/photos/1164927/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10057/54903879", attribution: "D. Maynard / iNaturalist"},
+                "Hippocampus patagonicus": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/165496598/original.jpg", iucnLink: "https://www.iucnredlist.org/species/195100/54909767", attribution: "Gonzalo Bravo / iNaturalist"},
+                "Hippocampus subelongatus": {url: "https://static.inaturalist.org/photos/1873652/large.jpg", iucnLink: "https://www.iucnredlist.org/species/40773/54906710", attribution: "Daniël Messom/ iNaturalist"},
+                "Hippocampus whitei": {url: "https://static.inaturalist.org/photos/12009596/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10088/46721312", attribution: "Samantha De Smet / iNaturalist"},
+                "Hippocampus erectus": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/391235678/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10066/20191442", attribution: "Pauline Walsh Jacobson / iNaturalist"},
+                "Hippocampus dahli": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/391235678/large.jpg", iucnLink: "https://www.iucnredlist.org/species/101729662/103206102", attribution: "Pauline Walsh Jacobson / iNaturalist"},
+                "Hippocampus algiricus": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/592647296/large.jpg", iucnLink: "https://www.iucnredlist.org/species/41007/54907846", attribution: "Dennis Rabeling / iNaturalist"},
+                "Hippocampus ingens": {url: "https://static.inaturalist.org/photos/12112505/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10072/54905720", attribution: "Joshua Feingold / iNaturalist"},
+                "Hippocampus hippocampus": {url: "https://static.inaturalist.org/photos/49805056/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10069/67618259", attribution: "Janny Bosman / iNaturalist"},
+                "Hippocampus bargibanti": {url: "https://static.inaturalist.org/photos/49731161/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10060/250508253", attribution: "Marc Van Buynder / iNaturalist"},
+                "Hippocampus denise": {url: "https://static.inaturalist.org/photos/49840052/large.jpg", iucnLink: "https://www.iucnredlist.org/species/41716/247789834", attribution: "Valerie Debruyne / iNaturalist"},
+                "Hippocampus satomiae": {url: "https://static.inaturalist.org/photos/49629697/large.jpg", iucnLink: "https://www.iucnredlist.org/species/250584311/250593114", attribution: "Barbara Moll / iNaturalist"},
+                "Hippocampus nalu": {url: "https://static.inaturalist.org/photos/49833424/large.jpg", iucnLink: "https://www.iucnredlist.org/species/250584311/250593114", attribution: "Pedro Ferreira / iNaturalist"},
+                "Hippocampus comes": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/336623495/large.jpg", iucnLink: "https://www.iucnredlist.org/species/41008/128958172", attribution: "Franck Fogarolo / iNaturalist"},
+                "Hippocampus fisheri": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/336623503/medium.jpg", iucnLink: "https://www.iucnredlist.org/species/41009/54908481", attribution: "Boris Mekler / iNaturalist"},
+                "Hippocampus reidi": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/336623503/medium.jpg", iucnLink: "https://www.iucnredlist.org/species/10082/17025021", attribution: "Ernst Seeling / iNaturalist"},
+                "Hippocampus haema": {url: "https://static.inaturalist.org/photos/49634367/medium.jpg", iucnLink: "https://www.iucnredlist.org/species/250584055/250593104", attribution: "Zhang Jinggong / iNaturalist"},
+                "Hippocampus japapigu": {url: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Hippocampus_japapigu_%2810.3897-zookeys.779.24799%29_Figure_4.jpg", iucnLink: "https://www.iucnredlist.org/species/250584194/250593109", attribution: "Richard Smith / iNaturalist"},
+                "Hippocampus trimaculatus": {url: "https://static.inaturalist.org/photos/49835402/medium.jpg", iucnLink: "https://www.iucnredlist.org/species/10087/17252219", attribution: "Caron Wong / iNaturalist"},
+                "Hippocampus guttulatus": {url: "https://static.inaturalist.org/photos/2100424/original.jpg", iucnLink: "https://www.iucnredlist.org/species/41006/67617766", attribution: "Edwin van der Sande / iNaturalist"},
+                "Hippocampus waleananus": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/9829337/large.jpg", iucnLink: "https://www.iucnredlist.org/species/250584632/250593119", attribution: "Reto Piere / iNaturalist"},
+                "Hippocampus debelius": {iucnLink: "https://www.iucnredlist.org/species/47728610/242659051"},
+                "Hippocampus angustus": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/42104659/large.jpg", iucnLink: "https://www.iucnredlist.org/species/107261486/54907188", attribution: "Alexandra Hoschke / iNaturalist"},
+                "Hippocampus breviceps": {url: "https://inaturalist-open-data.s3.amazonaws.com/photos/78304319/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10063/54904334", attribution: "Paul Sorensen / iNaturalist"},
+                "Hippocampus minotaur": {iucnLink: "https://www.iucnredlist.org/species/10077/54906067"},
+                "Hippocampus paradoxus": {iucnLink: "https://www.iucnredlist.org/species/65368181/67622595"},
+                "Hippocampus planifrons": {iucnLink: "https://www.iucnredlist.org/species/68527310/47728827"},
+                "Hippocampus zebra": {iucnLink: "https://www.iucnredlist.org/species/107261083/54906819"}
+            };
 
-"Hippocampus guttulatus": {
-url: "https://static.inaturalist.org/photos/2100424/original.jpg",
-iucnLink: "https://www.iucnredlist.org/species/41006/67617766",
-attribution: "Edwin van der Sande / iNaturalist"},
-
-"Hippocampus waleananus": {
-url:" https://inaturalist-open-data.s3.amazonaws.com/photos/9829337/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/250584632/250593119",
-attribution: "Reto Piere / iNaturalist"},
-"Hippocampus debelius": {
-iucnLink: "https://www.iucnredlist.org/species/47728610/242659051"},
-"Hippocampus angustus": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/42104659/large.jpg",
-iucnLink: " https://www.iucnredlist.org/species/107261486/54907188",
-attribution: "Alexandra Hoschke / iNaturalist"},
-
-"Hippocampus breviceps": {
-url: "https://inaturalist-open-data.s3.amazonaws.com/photos/78304319/large.jpg",
-iucnLink: "https://www.iucnredlist.org/species/10063/54904334",
-attribution: "Paul Sorensen / iNaturalist"},
-"Hippocampus minotaur": {
-iucnLink: "https://www.iucnredlist.org/species/10077/54906067"},
-"Hippocampus paradoxus": {
-iucnLink: "https://www.iucnredlist.org/species/65368181/67622595"},
-"Hippocampus planifrons": {
-iucnLink: "https://www.iucnredlist.org/species/68527310/47728827"},
-"Hippocampus zebra": {
-iucnLink: "https://www.iucnredlist.org/species/107261083/54906819"},
-
-
-
-
-
-};
             const seizureData = [{c:"Viet Nam",exp:243412.6,imp:617992.1,tr:80520.45},{c:"China",exp:113723,imp:1705997,tr:27881.04},{c:"Hong Kong SAR",exp:116349.1,imp:523960.5,tr:1028.535},{c:"India",exp:221765.4,imp:25118.11,tr:92852.31},{c:"Philippines",exp:215936.9,imp:96394.46,tr:21561.34},{c:"Peru",exp:1885832,imp:0,tr:443494.1},{c:"Thailand",exp:30271.61,imp:24140.37,tr:5204.461},{c:"Egypt",exp:156245.1,imp:18587.36,tr:15241.64},{c:"Indonesia",exp:113961.3,imp:557.6208,tr:0},{c:"Mozambique",exp:39464.68,imp:0,tr:3345.725},{c:"Malaysia",exp:316.4758,imp:11152.42,tr:7040},{c:"Mexico",exp:17222.09,imp:947,tr:531},{c:"Nepal",exp:15241.64,imp:0,tr:5204.461},{c:"UAE",exp:0,imp:22118.96,tr:7806.691},{c:"Panama",exp:0,imp:20000,tr:0},{c:"China (Macau)",exp:0,imp:19702.6,tr:0},{c:"France",exp:0,imp:54,tr:20952},{c:"Bolivia",exp:0,imp:0,tr:23258.33},{c:"Germany",exp:0,imp:53,tr:16248},{c:"Belgium",exp:0,imp:15,tr:13551},{c:"Netherlands",exp:0,imp:0,tr:6624.494},{c:"South Africa",exp:496.6543,imp:132,tr:7434.944}];
 
             const speciesInfo = {
@@ -582,260 +511,51 @@ iucnLink: "https://www.iucnredlist.org/species/107261083/54906819"},
             };
 
             const speciesDatabase = {
-                "Hippocampus algiricus": {
-                    habitat: "Coastal Areas with Silt, Mud, Gravel, Sand, Seagrass, Macroalgae, Coral Reefs and Estuaries",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Unspecified Trade"],
-                    trend: "Decreasing",
-                    size: 22,
-depth: "0-25"
+                "Hippocampus algiricus": {previous: {status: "VU", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal areas with silt, mud, gravel, sand, seagrass, macroalgae, coral reefs and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", " Traditional medicine trade"], trend: "Decreasing", size: 22, depth: "0-25"},
+                "Hippocampus nalu": {previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Sandy, sandstone-based coral reefs", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.2, depth: "12-17"},
+                "Hippocampus fisheri": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Pelagic waters", threats: ["Coastal development", "Water pollution"], trend: "Stable", size: 8, depth: "0-110"},
+                "Hippocampus patagonicus": {previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Algae, seagrass, artificial structures, sessile invertebrates and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", "Water pollution"], trend: "Decreasing", size: 15.5, depth: "0-120"},
+                "Hippocampus zosterae": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass bed and submerged vegetation", threats: ["Habitat degradation", "Aquarium and curios trades"], trend: "Stable", size: 5.4},
+                "Hippocampus guttulatus": {previous: {status: "DD", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Coastal lagoons, estuaries, seagrass meadows, macroalgae, rock reefs, artificial structures", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18, depth: "0-30"},
+                "Hippocampus hippocampus": {previous: {status: "DD", year: 2017}, updated: {status: "LC", year: "under review"}, habitat: "Soft sediment, rocky bottoms, seagrass meadows, macroalgae, artificial structures, lagoons and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 15, depth: "0-60"},
+                "Hippocampus abdominalis": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal waters, harbors, rocky reefs, macroalgal bed, loose gravel, seagrass and artificial structures", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 35, depth: "0-104"},
+                "Hippocampus angustus": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Soft bottom substrate, coral reefs", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 16, depth: "0-63"},
+                "Hippocampus breviceps": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Macroalgal beds, seagrass, coral and rocky reefs, and estuaries", threats: ["Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 10, depth: "0-15"},
+                "Hippocampus dahli": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Estuary channels, gravel and soft substrates", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 14, depth: "Unknown"},
+                "Hippocampus minotaur": {previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Sandy and hard bottoms, and soft corals", threats: ["Bottom bycatch", "Habitat degradation"], trend: "Unknown", size: 5, depth: "64-110"},
+                "Hippocampus paradoxus": {previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Shell benthos, sand with sponges and bryozoans", threats: ["Bycatch by multiple fishing gear"], trend: "Unknown", size: 6.5, depth: "94-110"},
+                "Hippocampus planifrons": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Rock pools, shallow algae, and weedy or rubble reefs", threats: ["Habitat degradation"], trend: "Stable", size: 11.6, depth: "0-20"},
+                "Hippocampus subelongatus": {previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Rocky reefs, seagrass beds, estuaries, macroalgae, and artificial structures", threats: ["Habitat degradation"], trend: "Stable", size: 20, depth: "0-25"},
+                "Hippocampus zebra": {previous: {status: "DD", year: 2016}, updated: {status: "LC", year: "under review"}, habitat: "Soft bottoms, black corals, and gorgonians", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 9, depth: "0-20"},
+                "Hippocampus bargibanti": {previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Coral reefs, specifically on muricella gorgonian sea fans", threats: ["Climate change", "Habitat degradation (Coral reef destruction)", "Tourism activities"], trend: "Decreasing", size: 2.4, depth: "4-40"},
+                "Hippocampus capensis": {previous: {status: "EN", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, submerged vegetation like zostera and ruppia", threats: ["Coastal development", "Water pollution"], trend: "Decreasing", size: 12},
+                "Hippocampus comes": {previous: {status: "VU", year: 2013}, updated: {status: "EN", year: "under review"}, habitat: "Coral reefs, sponge gardens, macroalgal beds, seagrass, rocky reefs, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium trade", "Bycatch by multiple fishing gear", "Habitat degradation", "Traditional medicine trade"], trend: "Decreasing", size: 18.7, depth: "0-20"},
+                "Hippocampus denise": {previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Gorgonian corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.4, depth: "13-102"},
+                "Hippocampus haema": {previous: {status: "VU", year: 2023}, updated: {status: "N/A"}, habitat: "Seagrass and seaweed", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 10, depth: "0-18"},
+                "Hippocampus japapigu": {previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.6, depth: "5-22"},
+                "Hippocampus satomiae": {previous: {status: "NE"}, updated: {status: "LC", year: "under review"}, habitat: "Gorgonian and soft corals", threats: ["Destructive fishing practice", "Habitat degradation"], trend: "Decreasing", size: 1.4, depth: "Unknown"},
+                "Hippocampus erectus": {previous: {status: "VU", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating sargassum, and sponges", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.5, depth: "0-100"},
+                "Hippocampus ingens": {previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Mangroves, macroalgae, seagrass and coral reefs", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 30, depth: "1-60"},
+                "Hippocampus kuda": {previous: {status: "VU", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, seagrass, mangroves, muddy bottoms", threats: ["Bycatch by multiple fishing gear", "Traditional medicine bycatch"], trend: "Decreasing", size: 30},
+                "Hippocampus reidi": {previous: {status: "NT", year: 2016}, updated: {status: "VU", year: "under review"}, habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrass, estuaries, and especially macroalgae, mangroves, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation", "Tourism activities"], trend: "Decreasing", size: 23, depth: "0-55"},
+                "Hippocampus trimaculatus": {previous: {status: "VU", year: 2012}, updated: {status: "EN", year: "under review"}, habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.6, depth: "10-110"},
+                "Hippocampus waleananus": {previous: {status: "CR", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.8, depth: "5-20"},
+                "Hippocampus debelius": {previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 3.5, depth: " Unknown "},
+                "Hippocampus whitei": {previous: {status: "EN", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass, macroalgae, corals, sponges, and artificial structures", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 16.2, depth: "0-12"}
+            };
+
+            const habitatDatabase = {
+                "Coral reefs": {
+                    image: "https://discovery.sndimg.com/content/dam/images/discovery/fullset/2021/6/29/GettyImages-1189048716.jpg.rend.hgtvcom.1280.960.suffix/1624995019897.jpeg ",
+                    desc: "Coral reefs provide essential structural complexity for many seahorse species, particularly pygmy seahorses (e.g., <i>H. bargibanti</i>, <i>H. denise</i>) which have evolved to mimic specific gorgonian corals. These habitats offer shelter from predators and currents."
                 },
-                "Hippocampus nalu": {
-                    habitat: "Sandy, Sandstone-Based Coral Reefs",
-                    threats: ["Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 2.2,
-depth: "12-17"
-
+                "Mangroves": {
+                    image: "https://www.papuaparadise.com/wp-content/uploads/2024/11/mangrove-small-fishes-1200x800-1.jpg",
+                    desc: "Mangrove roots act as critical nurseries and feeding grounds for young seahorses. Species like <i>H. kuda</i> and <i>H. reidi</i> often cling to mangrove roots, relying on the murky waters and complex root systems for camouflage and protection."
                 },
-                "Hippocampus fisheri": {
-                    habitat: "Pelagic Waters",
-                    threats: ["Coastal Development", "Water Pollution"],
-                    trend: "Stable",
-                    size: 8,
-depth: "0-110"
-
-                },
-                "Hippocampus patagonicus": {
-                    habitat: "Algae, Seagrass, Artificial Structures, Sessile Invertebrates and Estuaries",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Water Pollution"],                    trend: "Decreasing",
-                    size: 15.5,
-depth: "0-120"
-
-                },
-
-                "Hippocampus zosterae": {
-                    habitat: "Seagrass Bed and Submerged Vegetation",
-                    threats: ["Habitat Degradation", "Unspecified Trade"],
-                    trend: "Stable",
-                    size: 5.4
-                },
-"Hippocampus guttulatus": {
-                    habitat: "Coastal Lagoons, Estuaries, Seagrass Meadows, Macroalgae, Rock Reefs, Artificial Structures",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 18,
-depth: "0-30"
-
-                },
-"Hippocampus hippocampus": {
-                    habitat: "Soft Sediment, Rocky Bottoms, Seagrass Meadows, Macroalgae, Artificial Structures, Lagoons and Estuaries",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 15,
-depth: "0-60"
-
-                },
-
-                "Hippocampus abdominalis": {
-                    habitat: "Coastal Waters, Harbors, Rocky Reefs, Macroalgal Bed, Loose Gravel, Seagrass and Artificial Structures",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Harmful Algal Bloom"],
-                    trend: "Stable",
-                    size: 35,
-depth: "0-104"
-
-                },
-
-                "Hippocampus angustus": {
-                    habitat: "Soft Bottom Substrate, Coral Reefs",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation"],
-                    trend: "Stable",
-                    size: 16,
-depth: "0-63"
-
-                },
-
-                "Hippocampus breviceps": {
-                    habitat: "Macroalgal Beds, Seagrass, Coral and Rocky Reefs, and Estuaries",
-                    threats: ["Habitat Degradation", "Harmful Algal Bloom"],
-                    trend: "Stable",
-                    size: 10,
-depth: "0-15"
-
-                },
-                "Hippocampus dahli": {
-                    habitat: "Estuary Channels, Gravel and Soft Substrates",
-                    threats: [ "Bycatch by Multiple Fishing Gear", "Habitat Degradation"],
-                    trend: "Stable",
-                    size: 14,
-depth: "N/A"
-
-                },
-                "Hippocampus minotaur": {
-                    habitat: "Sandy and Hard Bottoms, and Soft Corals",
-                    threats: ["Bottom Bycatch", "Habitat Degradation"],
-                    trend: "Unknown",
-                    size: 5,
-depth: "64-110"
-
-                },
-
-                "Hippocampus paradoxus": {
-                    habitat: "Shell Benthos, Sand with Sponges and Bryozoans",
-                    threats: ["Bycatch by Multiple Fishing Gear"],
-                    trend: "Unknown",
-                    size: 6.5,
-depth: "94-110"
-
-                },
-                "Hippocampus planifrons": {
-           
-                    habitat: "Rock Pools, Shallow Algae, and Weedy or Rubble Reefs",
-                    threats: ["Habitat Degradation"],
-                    trend: "Stable",
-                    size: 11.6,
-depth: "0-20"
-
-                },
-                "Hippocampus subelongatus": {
-         
-                    habitat: "Rocky Reefs, Seagrass Beds, Estuaries, Macroalgae, and Artificial Structures",
-                    threats: ["Habitat Degradation"],
-                    trend: "Stable",
-                    size: 20,
-depth: "0-25"
-
-
-                },
-
-                "Hippocampus zebra": {
-                    habitat: "Soft Bottoms, Black Corals, and Gorgonians",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation"],
-                    trend: "Stable",
-                    size: 9,
-depth: "0-20"
-
-                },
-
-                "Hippocampus bargibanti": {
-                    habitat: "Coral Reefs, specifically on Muricella Gorgonian Sea Fans",
-                    threats: ["Climate Change", "Habitat Degradation (Coral Reef Destruction)", "Tourism Activities"],
-                    trend: "Decreasing",
-                    size: 2.4,
-depth: "4-40"
-
-                },
-                "Hippocampus capensis": {
-                    habitat: "Estuaries, Submerged Vegetation like Zostera and Ruppia",
-                    threats: ["Coastal Development", "Water Pollution", "Unspecified Trade"],
-                    trend: "Decreasing",
-                    size: 12
-                },
-
-                "Hippocampus comes": {
-                    habitat: "Coral Reefs, Sponge Gardens, Macroalgal Beds, Seagrass, Rocky Reefs, Sandy and Muddy Bottoms, and Artificial Structures",
-                    threats: ["Aquarium Trade", "Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Traditional Medicine Trade"],
-                    trend: "Decreasing",
-                    size: 18.7,
-depth: "0-20"
-
-                },
-                "Hippocampus denise": {
-                    habitat: "Gorgonian Corals",
-                    threats: ["Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 2.4,
-depth: "13-102"
-
-                },
-"Hippocampus haema": {
-                    habitat: "Seagrass and Seaweed",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 10,
-depth: "0-18"
-
-                },
-"Hippocampus japapigu": {
-                    habitat: "Soft Corals, Coralline Algae, Halimeda spp. and Hydroids",
-                    threats: ["Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 1.6,
-depth: "5-22"
-
-                },
-"Hippocampus satomiae": {
-                    habitat: "Gorgonian and Soft Corals",
-                    threats: ["Destructive Fishing Practice", "Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 1.4,
-depth: "N/A"
-
-                },
-
-                "Hippocampus erectus": {
-                    habitat: "Mangroves, Coral, Rocky and Oyster Reef Habitats, Macroalga, Sandy Bottoms, Artificial Structures, Floating Sargassum, and Sponges",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Unspecified Trade"],
-                    trend: "Decreasing",
-                    size: 18.5,
-depth: "0-100"
-
-                },
-                "Hippocampus ingens": {
-                    habitat: "Mangroves, Macroalgae, Seagrass and Coral Reefs",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Unspecified Trade"],
-                    trend: "Decreasing",
-                    size: 30,
-depth: "1-60"
-
-                },
-                "Hippocampus kuda": {
-                    habitat: "Estuaries, Seagrass, Mangroves, Muddy Bottoms",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Traditional Medicine Bycatch"],
-                    trend: "Decreasing",
-                    size: 30
-                },
-                "Hippocampus reidi": {
-                    habitat: "Bryozoans, Oysters, Sponges, and Tunicates, Gorgonian Corals, Seagrass, Estuaries, and especially n Macroalgae, Mangroves, Sandy and Muddy Bottoms, and Artificial Structures",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Tourism Activities", "Unspecified Trade"],
-                    trend: "Decreasing",
-                    size: 23,
-depth: "0-55"
-
-                },
-                "Hippocampus trimaculatus": {
-                    habitat: "Gravel and Sand Bottoms, Octocorals, Macroalgae, Sponges and Seagrass Bed",
-                    threats: ["Bycatch by Multiple Fishing Gear", "Habitat Degradation", "Unspecified Trade"],
-                    trend: "Decreasing",
-                    size: 18.6,
-depth: "10-110"
-
-                },
-
-                "Hippocampus waleananus": {
-                    habitat: "Soft Corals",
-                    threats: ["Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 1.8,
-depth: "5-20"
-
-                },
-
-                "Hippocampus debelius": {
-                    habitat: "Soft Corals",
-                    threats: ["Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 3.5,
-depth: "N/A"
-
-                },
-
-                "Hippocampus whitei": {
-                    habitat: "Seagrass, Macroalgae, Corals, Sponges, and Artificial Structures",
-                    threats: ["Coastal Development", "Habitat Degradation"],
-                    trend: "Decreasing",
-                    size: 16.2,
-depth: "0-12"
-
+                "Seagrass": {
+                    image: " https://www.scienceinschool.org/wp-content/uploads/2024/03/Image_1b_sunny_seagrass_Credit_Fiona-Crouch-800x600.png",
+                    desc: "Seagrass meadows are one of the most common habitats for seahorses globally. The grass blades provide perfect holdfasts for their prehensile tails and excellent camouflage. Species like <i>H. zosterae</i> and <i>H. abdominalis</i> thrive here."
                 }
             };
 
@@ -843,80 +563,60 @@ depth: "0-12"
                 habitat: "Coastal marine waters, often associated with seagrass, algae, or coral reefs.",
                 threats: ["Habitat degradation", "Bycatch", "Climate change"],
                 trend: "Unknown",
-                size: "N/A"
+                size: " Unknown"
             };
 
             // --- INIT MAP ---
-            const webmap = new WebMap({
-                portalItem: {
-                    id: "8a36f0f1a97c4389ba1b3d086ba08150"
-                }
-            });
-
+            const webmap = new WebMap({ portalItem: { id: "8a36f0f1a97c4389ba1b3d086ba08150" } });
             const view = new MapView({
                 container: "viewDiv",
                 map: webmap,
-                ui: {
-                    components: ["attribution", "zoom"]
-                },
-                popup: {
-                    autoOpenEnabled: false,
-                    defaultPopupTemplateEnabled: false
-                }
+                ui: { components: ["attribution", "zoom"] },
+                popup: { autoOpenEnabled: false, defaultPopupTemplateEnabled: false }
             });
+
             // --- API & HELPER FUNCTIONS ---
-async function fetchSpeciesImage(scientificName) {
-    const override = manualImageOverrides[scientificName];
+            async function fetchSpeciesImage(scientificName) {
+                const override = manualImageOverrides[scientificName];
+                const defaultIucnLink = `https://www.iucnredlist.org/search?query=${encodeURIComponent(scientificName)}`;
+                const placeholderImage = "https://t3.ftcdn.net/jpg/10/22/24/80/360_F_1022248039_7LDxHRi3Mlt9BK3wzLBUGZp9XAO1gt2s.jpg";
 
-    // Default IUCN search page if no manual link
-    const defaultIucnLink = `https://www.iucnredlist.org/search?query=${encodeURIComponent(scientificName)}`;
+                if (!override) return { url: placeholderImage, attribution: "Image not available", link: defaultIucnLink };
+                return { url: override.url || placeholderImage, attribution: override.attribution || "Image not available", link: override.iucnLink || defaultIucnLink };
+            }
 
-    // Placeholder image if no specific image
-    const placeholderImage = "https://t3.ftcdn.net/jpg/10/22/24/80/360_F_1022248039_7LDxHRi3Mlt9BK3wzLBUGZp9XAO1gt2s.jpg";
-
-    if (!override) {
-        return { 
-            url: placeholderImage, 
-            attribution: "Image not available", 
-            link: defaultIucnLink 
-        };
-    }
-
-    return {
-        url: override.url || placeholderImage,
-        attribution: override.attribution || "Image not available",
-        link: override.iucnLink || defaultIucnLink
-    };
-}function renderSpeciesImage(img) {
-    if (!img) return "";
-
-    const imageTag = `
-        <img src="${img.url}" alt="Species image">
-    `;
-
-    if (img.link) {
-        return `
-            <a href="${img.link}" target="_blank" rel="noopener noreferrer">
-                ${imageTag}
-            </a>
-        `;
-    }
-
-    return imageTag;
-}
             function getStatusColor(code) {
-                const colors = {
-                    "LC": "#22c55e",
-                    "NT": "#a3e635",
-                    "VU": "#fbbf24",
-                    "EN": "#f97316",
-                    "CR": "#ef4444",
-                    "DD": "#94a3b8"
-                };
+                const colors = { "LC": "#22c55e", "NT": "#a3e635", "VU": "#fbbf24", "EN": "#f97316", "CR": "#ef4444", "DD": "#94a3b8", "NE": "#ffffff" };
                 return colors[code] || "#94a3b8";
             }
 
+            function getStatusBadge(assessment) {
+                if (!assessment || !assessment.status) return "";
+                const yearHTML = assessment.year ? ` (${assessment.year})` : "";
+                return `<span class="status-badge" style="background-color:${getStatusColor(assessment.status)}">${assessment.status}${yearHTML}</span>`;
+            }
+
             // --- PANEL RENDERING LOGIC ---
+            
+            function showHabitatDetails(habitatName) {
+                const panel = document.getElementById('detailPanel');
+                const header = document.getElementById('detailHeaderContent');
+                const body = document.getElementById('detailBody');
+                const data = habitatDatabase[habitatName];
+
+                if (!data) return;
+
+                panel.classList.add('active');
+                header.innerHTML = `<h2 class="detail-title">${habitatName}</h2><p class="detail-subtitle">Essential Seahorse Habitat</p>`;
+                
+                body.innerHTML = `
+                    <div class="species-image-container">
+                        <img src="${data.image}" class="species-image loaded" alt="${habitatName}">
+                    </div>
+                    <div class="section-title">Ecological Importance</div>
+                    <p class="text-body">${data.desc}</p>
+                `;
+            }
 
             async function fetchAndShowDetails(scientificName, commonName, status) {
                 const panel = document.getElementById('detailPanel');
@@ -924,60 +624,33 @@ async function fetchSpeciesImage(scientificName) {
                 const body = document.getElementById('detailBody');
 
                 panel.classList.add('active');
-
-                header.innerHTML = `
-                <h2 class="detail-title">${commonName}</h2>
-                <p class="detail-subtitle">${scientificName}</p>
-                `;
+                header.innerHTML = `<h2 class="detail-title">${commonName}</h2><p class="detail-subtitle">${scientificName}</p>`;
                 body.innerHTML = `<div style="padding:20px; text-align:center; color:rgba(255,255,255,0.5)">Loading species data...</div>`;
 
-                const statusColor = getStatusColor(status);
                 const data = speciesDatabase[scientificName] || genericData;
                 const imageData = await fetchSpeciesImage(scientificName);
 
-let imageHTML = imageData ?
-    `<div class="species-image-container">
-        <a href="${imageData.link}" target="_blank" rel="noopener noreferrer">
-            <img src="${imageData.url}" class="species-image loaded" alt="${scientificName}" style="cursor:pointer">
-        </a>
-        <div class="image-credit">${imageData.attribution}</div>
-     </div>` :
-    `<div class="species-image-container">
-        <span style="font-size:12px; color:rgba(255,255,255,0.5);">Image Not Available</span>
-     </div>`;
+                let imageHTML = imageData.url ?
+                    `<div class="species-image-container"><a href="${imageData.link}" target="_blank"><img src="${imageData.url}" class="species-image loaded" alt="${scientificName}" style="cursor:pointer"></a><div class="image-credit">&copy;${imageData.attribution}</div></div>` :
+                    `<div class="species-image-container"><span style="font-size:12px; color:rgba(255,255,255,0.5);">Image Not Available</span></div>`;
+
+                // YELLOW TRIANGLE SVG
+                const threatIconSVG = `<svg class="threat-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.044-2 5.198 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>`;
+
                 body.innerHTML = `
-                <div style="margin-bottom:20px;">
-                    <span class="status-badge" style="background-color: ${statusColor}">${status || 'N/A'}</span>
-                    <span style="color:rgba(255,255,255,0.7); font-size:12px; font-weight:600;">IUCN RED LIST</span>
-                </div>
+                <div style="margin-bottom:20px;">${getStatusBadge({status: status})}</div>
                 ${imageHTML}
-<div class="info-grid">
-    <div class="info-box">
-        <span class="info-label">Population Trend</span>
-        <div class="info-value" style="color: ${data.trend === 'Decreasing' ? '#f97316' : 'white'}">
-            ${data.trend}
-        </div>
-    </div>
-
-    <div class="info-box">
-        <span class="info-label">Max Size</span>
-        <div class="info-value">
-            ${data.size} ${data.size !== 'N/A' ? 'cm' : ''}
-        </div>
-    </div>
-
-    <div class="info-box">
-        <span class="info-label">Depth Range</span>
-        <div class="info-value">
-            ${data.depth} ${data.depth !== 'N/A' ? 'm' : ''}
-        </div>
-    </div>
-</div>                <div class="section-title">Habitat</div>
-                <p class="text-body">${data.habitat}</p>
-
+                <div class="info-grid">
+                    <div class="info-box" style="grid-column: 1 / span 3;"><span class="info-label">Current Assessment</span><div class="info-value"> ${getStatusBadge(data.previous)} </div></div>
+                    <div class="info-box" style="grid-column: 4 / span 3;"><span class="info-label">Updated Assessment</span><div class="info-value"> ${getStatusBadge(data.updated)} </div></div>
+                    <div class="info-box" style="grid-column: 1 / span 2;"><span class="info-label">Population Trend</span><div class="info-value" style="color: ${data.trend === 'Decreasing' ? '#ff6b6b' : data.trend === 'Stable' ? '#4ade80' : 'white'}; text-shadow: 0 0 6px rgba(255, 107, 107, 0.6); font-weight: 700;">${data.trend}</div></div>
+                    <div class="info-box" style="grid-column: 3 / span 2;"><span class="info-label">Max Size</span><div class="info-value">${data.size} ${data.size !== 'Unknown' ? 'cm' : ''}</div></div>
+                    <div class="info-box" style="grid-column: 5 / span 2;"><span class="info-label">Depth Range</span><div class="info-value">${data.depth} ${data.depth !== 'Unknown' ? 'm' : ''}</div></div>
+                </div>
+                <div class="section-title">Habitat</div><p class="text-body">${data.habitat}</p>
                 <div class="section-title">Major Threats</div>
                 <div style="margin-top:10px">
-                    ${data.threats.map(t => `<div class="threat-item"><div class="threat-dot"></div>${t}</div>`).join('')}
+                    ${data.threats.map(t => `<div class="threat-item">${threatIconSVG}${t}</div>`).join('')}
                 </div>
                 `;
             }
@@ -988,15 +661,33 @@ let imageHTML = imageData ?
                 const body = document.getElementById('detailBody');
 
                 panel.classList.add('active');
-                header.innerHTML = `
-                <h2 class="detail-title">Global Illegal Trade</h2>
-                <p class="detail-subtitle">Number of seahorses seized by jurisdiction</p>
-                `;
+                header.innerHTML = `<h2 class="detail-title">Global Illegal Trade</h2><p class="detail-subtitle">Number of seahorses seized by jurisdiction</p>`;
 
-                const sorted = [...seizureData].sort((a, b) => (b.exp + b.imp + b.tr) - (a.exp + a.imp + a.tr));
-                const maxVal = sorted[0].exp + sorted[0].imp + sorted[0].tr;
+                const expLayer = webmap.allLayers.find(l => l.title === "Exporter");
+                const impLayer = webmap.allLayers.find(l => l.title === "Importer");
+                const trLayer = webmap.allLayers.find(l => l.title === "Transit");
+
+                const showExp = expLayer ? expLayer.visible : false;
+                const showImp = impLayer ? impLayer.visible : false;
+                const showTr = trLayer ? trLayer.visible : false;
+
+                const processedData = seizureData.map(d => {
+                    const currentTotal = (showExp ? d.exp : 0) + (showImp ? d.imp : 0) + (showTr ? d.tr : 0);
+                    return { ...d, currentTotal };
+                });
+
+                const sorted = processedData.filter(d => d.currentTotal > 0).sort((a, b) => b.currentTotal - a.currentTotal);
+                
+                if (sorted.length === 0) {
+                    body.innerHTML = `<div style="padding:40px; text-align:center; color:rgba(255,255,255,0.5)">
+                        Toggle <b>Exporter</b>, <b>Importer</b>, or <b>Transit</b> layers to view data.
+                    </div>`;
+                    return;
+                }
+
+                const maxVal = sorted[0].currentTotal;
+
                 const chartRows = sorted.map(d => {
-                    const total = d.exp + d.imp + d.tr;
                     const expPct = (d.exp / maxVal) * 100;
                     const impPct = (d.imp / maxVal) * 100;
                     const trPct = (d.tr / maxVal) * 100;
@@ -1005,24 +696,24 @@ let imageHTML = imageData ?
                     <div class="chart-row">
                         <div class="chart-label" title="${d.c}">${d.c}</div>
                         <div class="chart-bar-wrapper">
-                            ${d.exp > 0 ? `<div class="chart-bar" style="width:${expPct}%; background:#24a8e0;" title="Export: ${Math.round(d.exp)}"></div>` : ''}
-                            ${d.tr > 0 ? `<div class="chart-bar" style="width:${trPct}%; background:#fbff0a;" title="Transit: ${Math.round(d.tr)}"></div>` : ''}
-                            ${d.imp > 0 ? `<div class="chart-bar" style="width:${impPct}%; background:#e64c4f;" title="Import: ${Math.round(d.imp)}"></div>` : ''}
+                            ${showExp && d.exp > 0 ? `<div class="chart-bar" style="width:${expPct}%; background:#24a8e0;" title="Export: ${Math.round(d.exp)}"></div>` : ''}
+                            ${showTr && d.tr > 0 ? `<div class="chart-bar" style="width:${trPct}%; background:#fbff0a;" title="Transit: ${Math.round(d.tr)}"></div>` : ''}
+                            ${showImp && d.imp > 0 ? `<div class="chart-bar" style="width:${impPct}%; background:#e64c4f;" title="Import: ${Math.round(d.imp)}"></div>` : ''}
                         </div>
-                        <div class="chart-val">${Math.round(total).toLocaleString()}</div>
+                        <div class="chart-val">${Math.round(d.currentTotal).toLocaleString()}</div>
                     </div>`;
                 }).join('');
 
                 body.innerHTML = `
                 <div style="margin-bottom:20px; display:flex; gap:15px; justify-content:center; font-size:11px;">
-                    <div style="display:flex; align-items:center; color:#ccc;"><span class="legend-swatch" style="background:#24a8e0;"></span>Export</div>
-                    <div style="display:flex; align-items:center; color:#ccc;"><span class="legend-swatch" style="background:#fbff0a;"></span>Transit</div>
-                    <div style="display:flex; align-items:center; color:#ccc;"><span class="legend-swatch" style="background:#e64c4f;"></span>Import</div>
+                    ${showExp ? `<div style="display:flex; align-items:center; font-weight:500; font-size:14; color:#fff;"><span class="legend-swatch" style="background:#24a8e0;"></span>Export</div>` : ''}
+                    ${showTr ? `<div style="display:flex; align-items:center; font-weight:500; font-size:14; color:#fff;"><span class="legend-swatch" style="background:#fbff0a;"></span>Transit</div>` : ''}
+                    ${showImp ? `<div style="display:flex; align-items:center; font-weight:500; font-size:14; color:#fff;"><span class="legend-swatch" style="background:#e64c4f;"></span>Import</div>` : ''}
                 </div>
                 <div class="chart-container">
                     ${chartRows}
                 </div>
-                <p style="font-size:10px; color:#94a3b8; margin-top:20px; text-align:center">Data: Foster, S. J., Ascione, S. J., Santaniello, F., & Phelps Bondaroff, T. N. (2025).</p>
+                <p style="font-size:10px; color:#fff; margin-top:20px; text-align:center">Data source: Foster, S. J., Ascione, S. J., Santaniello, F., & Phelps Bondaroff, T. N. (2025).</p>
                 `;
             }
 
@@ -1052,46 +743,40 @@ let imageHTML = imageData ?
                 }
 
                 if (!targetCountry) {
-                    header.innerHTML = `
-                    <h2 class="detail-title">Reported catch</h2>
-                    <p class="detail-subtitle">Select a jurisdiction to view gear</p>
-                    `;
+                    header.innerHTML = `<h2 class="detail-title">Reported catch of seahorse</h2><p class="detail-subtitle">Select a jurisdiction to view the list of fishing gear that reportedly caught seahorse</p>`;
                     const uniqueCountries = [...new Set(catchData.map(d => d.country))];
                     const countryStats = uniqueCountries.map(c => {
                         const count = catchData.filter(d => d.country === c).length;
-                        return {
-                            name: c,
-                            count: count
-                        };
-                    }).sort((a, b) => b.count - a.count);
-
+                        return { name: c, count: count };
+                    }).sort((a, b) => a.name.localeCompare(b.name));
+                    
                     const listHtml = countryStats.map(stat => `
-                    <div class="country-list-item" data-country="${stat.name}" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;">
-                        <span style="font-size:14px; color: #e0f2fe;">${stat.name}</span>
-                        <span style="font-size:11px; background:rgba(251, 191, 36, 0.15); padding:2px 6px; border-radius:4px; color:#fbbf24; font-weight:700;">${stat.count} types</span>
+                    <div class="country-card" data-country="${stat.name}">
+                        <div class="country-name" style="font-size:12px;">${stat.name}</div>
+                        <div class="country-meta">
+                            <span class="count-badge">${stat.count} types</span>
+                            <span class="card-chevron">&#10095;</span>
+                        </div>
                     </div>
                     `).join('');
 
                     body.innerHTML = `
-                    <div id="countryListContainer" style="background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden;">${listHtml}</div>
+                        <div id="countryListContainer" style="padding-bottom:10px;">${listHtml}</div>
+                        <div style="font-size:10px; color:#fff; text-align:center; padding:15px; border-top:1px solid rgba(255,255,255,0.1);">
+                            Data source: McPherson, et al. (unpublished)
+                        </div>
                     `;
                     
-                    // Add click listeners specifically for this list
-                    setTimeout(() => {
-                        document.querySelectorAll('.country-list-item').forEach(item => {
-                            item.addEventListener('click', (e) => {
-                                showCatchData(item.dataset.country);
-                            });
+                    const container = document.getElementById('countryListContainer');
+                    if(container) {
+                        container.querySelectorAll('.country-card').forEach(item => {
+                            item.addEventListener('click', (e) => { showCatchData(item.dataset.country); });
                         });
-                    }, 100);
+                    }
                     return;
                 }
 
-                header.innerHTML = `
-                <h2 class="detail-title" style="font-size:22px; margin-bottom:2px;">${targetCountry}</h2>
-                <p class="detail-subtitle">Reported Fishing Gear</p>
-                <button id="backToCountryList" style="margin-top:10px; background:none; border:1px solid rgba(255,255,255,0.3); padding:4px 8px; color:white; border-radius:4px; cursor:pointer; font-size:12px;">&larr; Back to list</button>
-                `;
+                header.innerHTML = `<h2 class="detail-title" style="font-size:22px; margin-bottom:2px;">${targetCountry}</h2><button id="backToCountryList" style="margin-top:8px; background:none; border:1px solid rgba(255,255,255,0.3); padding:4px 8px; color:white; border-radius:4px; cursor:pointer; font-size:14px;">&#8678; Back</button>`;
 
                 const agg = {};
                 filteredData.forEach(d => {
@@ -1101,36 +786,25 @@ let imageHTML = imageData ?
                 });
 
                 const chartData = Object.keys(agg).map((key, i) => ({
-                    label: key,
-                    value: agg[key],
-                    color: gearColors[i % gearColors.length]
+                    label: key, value: agg[key], color: gearColors[i % gearColors.length]
                 })).sort((a, b) => b.value - a.value);
 
                 const maxCount = chartData.length > 0 ? chartData[0].value : 1;
-                const listHtml = chartData.map(item => {
+                const listHtml = chartData.map((item, index) => {
                     const widthPct = (item.value / maxCount) * 100;
                     return `
-                    <div style="margin-bottom:12px;">
-                        <div style="display:flex; justify-content:space-between; font-size:13px; color:#e0f2fe; margin-bottom:4px;">
-                            <span>${item.label}</span>
-                            <span style="font-weight:600; color:white;">${item.value}</span>
-                        </div>
-                        <div style="height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
-                            <div style="height:100%; width:${widthPct}%; background:${item.color}; border-radius:3px;"></div>
-                        </div>
-                    </div>`;
+                        <div style="margin-bottom:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; font-size:12px; color:#e0f2fe; margin-bottom:2px;">
+                                <div style="line-height:1.1;">${index === 0 ? `<div style=" font-weight:500; font-size:12px; color: #ffffff; margin-bottom:10px;">Gear type</div>` : ``}<div>${item.label}</div></div>
+                                <div style="text-align:right; line-height:1.1;">${index === 0 ? `<div style=" font-weight:500; font-size:12px; color: #ffffff; margin-bottom:10px;">Number of sources</div>` : ``}<div style=" color:white; font-size:12px;">${item.value}</div></div>
+                            </div>
+                            <div style="height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;"><div style="height:100%; width:${widthPct}%; background:${item.color}; border-radius:4px;"></div></div>
+                        </div>`;
                 }).join('');
-
-                body.innerHTML = `
-                <div style="background:rgba(0,0,0,0.25); padding:20px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
-                    <div style="font-size:11px; font-weight:700; color:#60a5fa; margin-bottom:16px; text-transform:uppercase;">Gear Types List</div>
-                    <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;">${listHtml}</div>
-                </div>`;
                 
-                setTimeout(() => {
-                     const btn = document.getElementById('backToCountryList');
-                     if(btn) btn.addEventListener('click', () => showCatchData(null));
-                }, 100);
+                body.innerHTML = `<div style="background:rgba(0,0,0,0.25); padding:20px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);"><div style="max-height: 400px; overflow-y: auto; padding-right: 5px;">${listHtml}</div></div>`;
+                const btn = document.getElementById('backToCountryList');
+                if(btn) btn.addEventListener('click', () => showCatchData(null));
             }
 
             document.getElementById('closeDetail').addEventListener('click', () => {
@@ -1139,22 +813,12 @@ let imageHTML = imageData ?
 
 
             // --- MAIN VIEW LOGIC ---
-
             view.when().then(() => {
                 document.getElementById('loadingDiv').style.display = 'none';
 
                 view.ui.move("zoom", "top-left");
-                view.popup.dockOptions = {
-                    buttonEnabled: false,
-                    breakpoint: false,
-                    position: "bottom-left"
-                };
-                view.constraints = {
-                    minZoom: 1,
-                    maxZoom: 12,
-                    snapToZoom: false,
-                    rotationEnabled: true
-                };
+                view.popup.dockOptions = { buttonEnabled: false, breakpoint: false, position: "bottom-left" };
+                view.constraints = { minZoom: 1, maxZoom: 12, snapToZoom: false, rotationEnabled: true };
 
                 // --- LEGEND GENERATION ---
                 function addLayerToLegend(layer, container, level = 0) {
@@ -1162,6 +826,15 @@ let imageHTML = imageData ?
 
                     const item = document.createElement("div");
                     item.className = "legend-item";
+
+                    // --- CHECK IF LAYER IS INTERACTIVE ---
+                    const isInteractive = speciesInfo[layer.title] || 
+                                          habitatDatabase[layer.title] || 
+                                          ["Exporter", "Importer", "Transit", "Seahorse seizures", "Reported catch jurisdictions"].includes(layer.title);
+                    
+                    if (isInteractive) {
+                        item.classList.add("interactive");
+                    }
 
                     const collapseToggle = document.createElement("div");
                     collapseToggle.className = "collapse-toggle";
@@ -1198,7 +871,6 @@ let imageHTML = imageData ?
                         if (color.startsWith("linear-gradient")) symbol.style.background = color;
                         else symbol.style.backgroundColor = color;
 
-                        // Set Initial Visibility Rules
                         if (layer.title === "Reported catch jurisdictions") {
                             layer.opacity = 0.6;
                             layer.visible = true;
@@ -1213,8 +885,7 @@ let imageHTML = imageData ?
                     label.className = "legend-label";
                     if (speciesInfo[layer.title]) {
                         const info = speciesInfo[layer.title];
-                        const statusColor = getStatusColor(info.status);
-                        const badgeHTML = info.status ? `<span class="status-badge" style="background-color: ${statusColor}">${info.status}</span>` : "";
+                        const badgeHTML = info.status ? `<span class="status-badge" style="background-color: ${getStatusColor(info.status)}">${info.status}</span>` : "";
                         label.innerHTML = `<i>${layer.title}</i><div style="margin-top:2px; font-size:13px; opacity:0.8">${badgeHTML} ${info.common}</div>`;
                     } else {
                         label.textContent = layer.title;
@@ -1239,30 +910,28 @@ let imageHTML = imageData ?
                     item.appendChild(eye);
                     container.appendChild(item);
 
-                    // --- AUTO-TOGGLE PARENT ON SUBLAYER CLICK ---
+                    // --- AUTO-TOGGLE LOGIC ---
                     eye.addEventListener("click", e => {
                         e.stopPropagation();
                         
-                        // 1. Toggle clicked layer
                         const newVisible = !layer.visible;
                         layer.visible = newVisible;
                         eye.innerHTML = getEyeSVG(newVisible);
 
-                        // 2. If turning ON a sublayer, ensure parent group is also ON
+                        // Sync Parent
                         if (newVisible && layer.parent && layer.parent.type === "group" && !layer.parent.visible) {
                             layer.parent.visible = true;
-                            // Update parent eye icon via DOM traversal
-                            const parentContainer = container; 
-                            if(parentContainer.classList.contains('sublayer-container')) {
+                            const parentContainer = container.closest('.sublayer-container');
+                            if(parentContainer) {
                                 const parentItem = parentContainer.previousElementSibling;
-                                if(parentItem && parentItem.classList.contains('legend-item')) {
+                                if(parentItem) {
                                     const parentEye = parentItem.querySelector('.eye-icon');
                                     if(parentEye) parentEye.innerHTML = getEyeSVG(true);
                                 }
                             }
                         }
 
-                        // 3. Sync Model Children
+                        // Sync Children
                         const updateModelVisibility = (parent) => {
                             if (parent.layers && (parent.layers.items || Array.isArray(parent.layers))) {
                                 const children = parent.layers.items || parent.layers;
@@ -1274,7 +943,7 @@ let imageHTML = imageData ?
                         };
                         updateModelVisibility(layer);
 
-                        // 4. Sync DOM Children
+                        // Sync DOM Children
                         if (layer.type === "group") {
                             const subContainer = item.nextElementSibling;
                             if (subContainer && subContainer.classList.contains("sublayer-container")) {
@@ -1282,6 +951,14 @@ let imageHTML = imageData ?
                                 childEyes.forEach(childEye => {
                                     childEye.innerHTML = getEyeSVG(newVisible);
                                 });
+                            }
+                        }
+
+                        // --- TRIGGER CHART UPDATE IF NEEDED ---
+                        const panelTitle = document.querySelector('.detail-title');
+                        if (panelTitle && panelTitle.textContent === "Global Illegal Trade") {
+                            if (["Exporter", "Importer", "Transit", "Seahorse seizures"].includes(layer.title) || layer.title === "Seahorse seizures") {
+                                showTradeData();
                             }
                         }
                     });
@@ -1297,10 +974,10 @@ let imageHTML = imageData ?
                             
                             if (layer.parent && layer.parent.type === "group" && !layer.parent.visible) {
                                 layer.parent.visible = true;
-                                const parentContainer = container;
-                                if(parentContainer.classList.contains('sublayer-container')) {
+                                const parentContainer = container.closest('.sublayer-container');
+                                if(parentContainer) {
                                     const parentItem = parentContainer.previousElementSibling;
-                                    if(parentItem && parentItem.classList.contains('legend-item')) {
+                                    if(parentItem) {
                                         const parentEye = parentItem.querySelector('.eye-icon');
                                         if(parentEye) parentEye.innerHTML = getEyeSVG(true);
                                     }
@@ -1318,6 +995,8 @@ let imageHTML = imageData ?
                             } else if (speciesInfo[layer.title]) {
                                 const info = speciesInfo[layer.title];
                                 fetchAndShowDetails(layer.title, info.common, info.status);
+                            } else if (habitatDatabase[layer.title]) {
+                                showHabitatDetails(layer.title);
                             }
                         } catch (err) {
                             console.error(err);
@@ -1358,36 +1037,48 @@ let imageHTML = imageData ?
 
                 sortedLayers.forEach(layer => addLayerToLegend(layer, legendContainer));
 
-                // Click Handler on Map
+                // --- CLICK HANDLER ---
                 view.on("click", async (event) => {
                     view.popup.close();
+
                     const response = await view.hitTest(event);
                     if (response.results.length === 0) return;
+
                     const hit = response.results.find(r => {
                         const g = r.graphic;
                         if (!g || !g.layer) return false;
-                        const t = g.layer.title;
-                        return speciesInfo[t] ||
-                            ["Exporter", "Importer", "Transit", "Seahorse seizures"].includes(t) ||
-                            t === "Reported catch jurisdictions";
+                        const title = g.layer.title;
+                        if (speciesInfo[title]) return true;
+                        if (habitatDatabase[title]) return true;
+                        if (["Exporter", "Importer", "Transit"].includes(title)) return true;
+                        if (title === "Reported catch jurisdictions") return true;
+                        return false;
                     });
-                    if (hit) {
-                        const title = hit.graphic.layer.title;
-                        if (speciesInfo[title]) {
-                            const info = speciesInfo[title];
-                            fetchAndShowDetails(title, info.common, info.status);
-                        } else if (title === "Reported catch jurisdictions") {
-                            const attr = hit.graphic.attributes;
-                            const candidates = [attr.country, attr.Country, attr.COUNTRY, attr.name, attr.Name, attr.NAME, attr.cntry_name, attr.CNTRY_NAME, attr.Cntry_Name, attr.sovereignt, attr.SOVEREIGNT, attr.admin, attr.ADMIN];
-                            const country = candidates.find(c => c && typeof c === 'string');
-                            showCatchData(country);
-                        } else {
-                            showTradeData();
-                        }
+
+                    if (!hit) return;
+
+                    const graphic = hit.graphic;
+                    const title = graphic.layer.title;
+
+                    if (speciesInfo[title]) {
+                        const info = speciesInfo[title];
+                        fetchAndShowDetails(title, info.common, info.status);
+                    } else if (habitatDatabase[title]) {
+                        showHabitatDetails(title);
+                    } else if (title === "Reported catch jurisdictions") {
+                        const attr = graphic.attributes;
+                        const candidates = [
+                            attr.country, attr.Country, attr.COUNTRY, attr.name, attr.Name, attr.NAME,
+                            attr.cntry_name, attr.CNTRY_NAME, attr.Cntry_Name, attr.sovereignt, attr.SOVEREIGNT, attr.admin, attr.ADMIN
+                        ];
+                        const country = candidates.find(c => c && typeof c === "string");
+                        showCatchData(country);
+                    } else if (["Exporter", "Importer", "Transit"].includes(title)) {
+                        showTradeData();
                     }
                 });
 
-                // Search Logic
+                // --- SEARCH LOGIC ---
                 const searchBox = document.getElementById("legendSearch");
                 const sidebar = document.getElementById("legendSidebar");
                 searchBox.addEventListener("input", () => {
@@ -1427,15 +1118,3 @@ let imageHTML = imageData ?
         })();
     </script>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
