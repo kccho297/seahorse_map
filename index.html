@@ -332,7 +332,7 @@
 .species-image { 
     width: 100%; 
     height: 100%; 
-    object-fit: cover; 
+    object-fit: contain; 
     display: block; 
     opacity: 0;
     transition: opacity 0.5s; 
@@ -496,6 +496,7 @@
         import MapView from "https://js.arcgis.com/4.33/@arcgis/core/views/MapView.js";
         import Legend from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Legend.js";
         import Expand from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Expand.js";
+import Home from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Home.js";
 
         (async () => {
 
@@ -587,37 +588,37 @@
             };
 
             const speciesDatabase = {
-                "Hippocampus algiricus": {previous: {status: "VU", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal areas with silt, mud, gravel, sand, seagrass, macroalgae, coral reefs and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", " Traditional medicine trade"], trend: "Decreasing", size: 22, depth: "0-25"},
-                "Hippocampus nalu": {previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Sandy, sandstone-based coral reefs", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.2, depth: "12-17"},
-                "Hippocampus fisheri": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Pelagic waters", threats: ["Coastal development", "Water pollution"], trend: "Stable", size: 8, depth: "0-110"},
-                "Hippocampus patagonicus": {previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Algae, seagrass, artificial structures, sessile invertebrates and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", "Water pollution"], trend: "Decreasing", size: 15.5, depth: "0-120"},
-                "Hippocampus zosterae": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass bed and submerged vegetation", threats: ["Habitat degradation", "Aquarium and curios trades"], trend: "Stable", size: 5.4},
-                "Hippocampus guttulatus": {previous: {status: "DD", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Coastal lagoons, estuaries, seagrass meadows, macroalgae, rock reefs, artificial structures", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18, depth: "0-30"},
-                "Hippocampus hippocampus": {previous: {status: "DD", year: 2017}, updated: {status: "LC", year: "under review"}, habitat: "Soft sediment, rocky bottoms, seagrass meadows, macroalgae, artificial structures, lagoons and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 15, depth: "0-60"},
-                "Hippocampus abdominalis": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal waters, harbors, rocky reefs, macroalgal bed, loose gravel, seagrass and artificial structures", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 35, depth: "0-104"},
-                "Hippocampus angustus": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Soft bottom substrate, coral reefs", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 16, depth: "0-63"},
-                "Hippocampus breviceps": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Macroalgal beds, seagrass, coral and rocky reefs, and estuaries", threats: ["Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 10, depth: "0-15"},
-                "Hippocampus dahli": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Estuary channels, gravel and soft substrates", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 14, depth: "Unknown"},
-                "Hippocampus minotaur": {previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Sandy and hard bottoms, and soft corals", threats: ["Bottom bycatch", "Habitat degradation"], trend: "Unknown", size: 5, depth: "64-110"},
-                "Hippocampus paradoxus": {previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Shell benthos, sand with sponges and bryozoans", threats: ["Bycatch by multiple fishing gear"], trend: "Unknown", size: 6.5, depth: "94-110"},
-                "Hippocampus planifrons": {previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Rock pools, shallow algae, and weedy or rubble reefs", threats: ["Habitat degradation"], trend: "Stable", size: 11.6, depth: "0-20"},
-                "Hippocampus subelongatus": {previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Rocky reefs, seagrass beds, estuaries, macroalgae, and artificial structures", threats: ["Habitat degradation"], trend: "Stable", size: 20, depth: "0-25"},
-                "Hippocampus zebra": {previous: {status: "DD", year: 2016}, updated: {status: "LC", year: "under review"}, habitat: "Soft bottoms, black corals, and gorgonians", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 9, depth: "0-20"},
-                "Hippocampus bargibanti": {previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Coral reefs, specifically on muricella gorgonian sea fans", threats: ["Climate change", "Habitat degradation (Coral reef destruction)", "Tourism activities"], trend: "Decreasing", size: 2.4, depth: "4-40"},
-                "Hippocampus capensis": {previous: {status: "EN", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, submerged vegetation like zostera and ruppia", threats: ["Coastal development", "Water pollution"], trend: "Decreasing", size: 12},
-                "Hippocampus comes": {previous: {status: "VU", year: 2013}, updated: {status: "EN", year: "under review"}, habitat: "Coral reefs, sponge gardens, macroalgal beds, seagrass, rocky reefs, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium trade", "Bycatch by multiple fishing gear", "Habitat degradation", "Traditional medicine trade"], trend: "Decreasing", size: 18.7, depth: "0-20"},
-                "Hippocampus denise": {previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Gorgonian corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.4, depth: "13-102"},
-                "Hippocampus haema": {previous: {status: "VU", year: 2023}, updated: {status: "N/A"}, habitat: "Seagrass and seaweed", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 10, depth: "0-18"},
-                "Hippocampus japapigu": {previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.6, depth: "5-22"},
-                "Hippocampus satomiae": {previous: {status: "NE"}, updated: {status: "LC", year: "under review"}, habitat: "Gorgonian and soft corals", threats: ["Destructive fishing practice", "Habitat degradation"], trend: "Decreasing", size: 1.4, depth: "Unknown"},
-                "Hippocampus erectus": {previous: {status: "VU", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating sargassum, and sponges", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.5, depth: "0-100"},
-                "Hippocampus ingens": {previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Mangroves, macroalgae, seagrass and coral reefs", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 30, depth: "1-60"},
-                "Hippocampus kuda": {previous: {status: "VU", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, seagrass, mangroves, muddy bottoms", threats: ["Bycatch by multiple fishing gear", "Traditional medicine bycatch"], trend: "Decreasing", size: 30},
-                "Hippocampus reidi": {previous: {status: "NT", year: 2016}, updated: {status: "VU", year: "under review"}, habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrass, estuaries, and especially macroalgae, mangroves, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation", "Tourism activities"], trend: "Decreasing", size: 23, depth: "0-55"},
-                "Hippocampus trimaculatus": {previous: {status: "VU", year: 2012}, updated: {status: "EN", year: "under review"}, habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.6, depth: "10-110"},
-                "Hippocampus waleananus": {previous: {status: "CR", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.8, depth: "5-20"},
-                "Hippocampus debelius": {previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 3.5, depth: " Unknown "},
-                "Hippocampus whitei": {previous: {status: "EN", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass, macroalgae, corals, sponges, and artificial structures", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 16.2, depth: "0-12"}
+                "Hippocampus algiricus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal areas with silt, mud, gravel, sand, seagrass, macroalgae, coral reefs and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", " Traditional medicine trade"], trend: "Decreasing", size: 22, depth: "0-25"},
+                "Hippocampus nalu": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Sandy, sandstone-based coral reefs", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.2, depth: "12-17"},
+                "Hippocampus fisheri": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Pelagic waters", threats: ["Coastal development", "Water pollution"], trend: "Stable", size: 8, depth: "0-110"},
+                "Hippocampus patagonicus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Algae, seagrass, artificial structures, sessile invertebrates and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", "Water pollution"], trend: "Decreasing", size: 15.5, depth: "0-120"},
+                "Hippocampus zosterae": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass bed and submerged vegetation", threats: ["Habitat degradation", "Aquarium and curios trades"], trend: "Stable", size: 5.4, depth: "nknown"},
+                "Hippocampus guttulatus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Coastal lagoons, estuaries, seagrass meadows, macroalgae, rock reefs, artificial structures", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18, depth: "0-30"},
+                "Hippocampus hippocampus": {label: "Data Deficient", previous: {status: "DD", year: 2017}, updated: {status: "LC", year: "under review"}, habitat: "Soft sediment, rocky bottoms, seagrass meadows, macroalgae, artificial structures, lagoons and estuaries", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 15, depth: "0-60"},
+                "Hippocampus abdominalis": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal waters, harbors, rocky reefs, macroalgal bed, loose gravel, seagrass and artificial structures", threats: ["Bycatch by multiple fishing gear", "Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 35, depth: "0-104"},
+                "Hippocampus angustus": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Soft bottom substrate, coral reefs", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 16, depth: "0-63"},
+                "Hippocampus breviceps": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Macroalgal beds, seagrass, coral and rocky reefs, and estuaries", threats: ["Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 10, depth: "0-15"},
+                "Hippocampus dahli": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Estuary channels, gravel and soft substrates", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 14, depth: "Unknown"},
+                "Hippocampus minotaur": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Sandy and hard bottoms, and soft corals", threats: ["Bottom bycatch", "Habitat degradation"], trend: "Unknown", size: 5, depth: "64-110"},
+                "Hippocampus paradoxus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Shell benthos, sand with sponges and bryozoans", threats: ["Bycatch by multiple fishing gear"], trend: "Unknown", size: 6.5, depth: "94-110"},
+                "Hippocampus planifrons": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Rock pools, shallow algae, and weedy or rubble reefs", threats: ["Habitat degradation"], trend: "Stable", size: 11.6, depth: "0-20"},
+                "Hippocampus subelongatus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Rocky reefs, seagrass beds, estuaries, macroalgae, and artificial structures", threats: ["Habitat degradation"], trend: "Stable", size: 20, depth: "0-25"},
+                "Hippocampus zebra": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "LC", year: "under review"}, habitat: "Soft bottoms, black corals, and gorgonians", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Stable", size: 9, depth: "0-20"},
+                "Hippocampus bargibanti": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Coral reefs, specifically on muricella gorgonian sea fans", threats: ["Climate change", "Habitat degradation (Coral reef destruction)", "Tourism activities"], trend: "Decreasing", size: 2.4, depth: "4-40"},
+                "Hippocampus capensis": {label: "Endangered", previous: {status: "EN", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, submerged vegetation like zostera and ruppia", threats: ["Coastal development", "Water pollution"], trend: "Decreasing", size: 12},
+                "Hippocampus comes": {label: "Vulnerable", previous: {status: "VU", year: 2013}, updated: {status: "EN", year: "under review"}, habitat: "Coral reefs, sponge gardens, macroalgal beds, seagrass, rocky reefs, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium trade", "Bycatch by multiple fishing gear", "Habitat degradation", "Traditional medicine trade"], trend: "Decreasing", size: 18.7, depth: "0-20"},
+                "Hippocampus denise": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Gorgonian corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.4, depth: "13-102"},
+                "Hippocampus haema": {label: "Vulnerable", previous: {status: "VU", year: 2023}, updated: {status: "N/A"}, habitat: "Seagrass and seaweed", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 10, depth: "0-18"},
+                "Hippocampus japapigu": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.6, depth: "5-22"},
+                "Hippocampus satomiae": {label: "Not evaluated", previous: {status: "NE"}, updated: {status: "LC", year: "under review"}, habitat: "Gorgonian and soft corals", threats: ["Destructive fishing practice", "Habitat degradation"], trend: "Decreasing", size: 1.4, depth: "Unknown"},
+                "Hippocampus erectus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating sargassum, and sponges", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.5, depth: "0-100"},
+                "Hippocampus ingens": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Mangroves, macroalgae, seagrass and coral reefs", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 30, depth: "1-60"},
+                "Hippocampus kuda": {label: "Vulnerable", previous: {status: "VU", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, seagrass, mangroves, muddy bottoms", threats: ["Bycatch by multiple fishing gear", "Traditional medicine bycatch"], trend: "Decreasing", size: 30},
+                "Hippocampus reidi": {label: "Near Threateden", previous: {status: "NT", year: 2016}, updated: {status: "VU", year: "under review"}, habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrass, estuaries, and especially macroalgae, mangroves, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation", "Tourism activities"], trend: "Decreasing", size: 23, depth: "0-55"},
+                "Hippocampus trimaculatus": {label: "Vulnerable", previous: {status: "VU", year: 2012}, updated: {status: "EN", year: "under review"}, habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.6, depth: "10-110"},
+                "Hippocampus waleananus": {label: "Critically Endangered", previous: {status: "CR", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.8, depth: "5-20"},
+                "Hippocampus debelius": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 3.5, depth: " Unknown "},
+                "Hippocampus whitei": {label: "Endangered", previous: {status: "EN", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass, macroalgae, corals, sponges, and artificial structures", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 16.2, depth: "0-12"}
             };
 
             const habitatDatabase = {
@@ -651,6 +652,14 @@
                 popup: { autoOpenEnabled: false, defaultPopupTemplateEnabled: false }
             });
 
+    view.when(() => {
+    // Add the Home widget
+    const homeWidget = new Home({
+      view: view
+    });
+    view.ui.add(homeWidget, "top-left");
+  });
+
             // --- API & HELPER FUNCTIONS ---
             async function fetchSpeciesImage(scientificName) {
                 const override = manualImageOverrides[scientificName];
@@ -665,6 +674,19 @@
                 const colors = { "LC": "#22c55e", "NT": "#a3e635", "VU": "#fbbf24", "EN": "#f97316", "CR": "#ef4444", "DD": "#94a3b8", "NE": "#ffffff" };
                 return colors[code] || "#94a3b8";
             }
+            function getLabelColor(code) {
+                const colors = { "Least Concern": "#22c55e", "Near Threated": "#a3e635", "Vulnerable": "#fbbf24", "Endangered": "#f97316", "Critically Endangered": "#ef4444", "Data Deficient": "#94a3b8", "Not Evaluated": "#ffffff" };
+                return colors[code] || "#94a3b8";
+            }
+
+            function getLabelBadge(assessment) {
+    if (!assessment || !assessment.label) return "";
+
+    // Only show the label, no year
+    return `<span class="status-badge" style="background-color:${getLabelColor(assessment.label)}">
+                ${assessment.label}
+            </span>`;
+}
 
             function getStatusBadge(assessment) {
                 if (!assessment || !assessment.status) return "";
@@ -714,7 +736,7 @@
                 const threatIconSVG = `<svg class="threat-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.044-2 5.198 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>`;
 
                 body.innerHTML = `
-                <div style="margin-bottom:20px;">${getStatusBadge({status: status})}</div>
+                <div style="margin-bottom:20px;">${getLabelBadge(data)}</div>
                 ${imageHTML}
                 <div class="info-grid">
                     <div class="info-box" style="grid-column: 1 / span 3;"><span class="info-label">Current Assessment</span><div class="info-value"> ${getStatusBadge(data.previous)} </div></div>
@@ -1202,4 +1224,3 @@ legendCollapseBtn.addEventListener("click", () => {
         })();
     </script>
 </div>
-
