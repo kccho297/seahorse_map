@@ -876,7 +876,17 @@ import Home from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Home.js";
                     return;
                 }
 
-                header.innerHTML = `<h2 class="detail-title" style="font-size:22px; margin-bottom:2px;">${targetCountry}</h2><button id="backToCountryList" style="margin-top:8px; background:none; border:1px solid rgba(255,255,255,0.3); padding:4px 8px; color:white; border-radius:4px; cursor:pointer; font-size:14px;">&#8678; Back</button>`;
+header.innerHTML = `
+<h2 class="detail-title" style="font-size:22px; margin-bottom:2px;">${targetCountry}</h2>
+
+<button id="backToCountryList"
+style="margin-top:8px; background:none; border:1px solid rgba(255,255,255,0.3); padding:4px 8px; color:white; border-radius:4px; cursor:pointer; font-size:14px; display:flex; align-items:center; gap:6px;">
+
+<img src="https://www.svgrepo.com/show/54336/return-button.svg"
+style="width:14px; height:14px; filter:invert(1);">
+</button>
+`;
+
 
                 const agg = {};
                 filteredData.forEach(d => {
