@@ -611,11 +611,11 @@ import Home from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Home.js";
                 "Hippocampus haema": {label: "Vulnerable", previous: {status: "VU", year: 2023}, updated: {status: "N/A"}, habitat: "Seagrass and seaweed", threats: ["Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 10, depth: "0-18"},
                 "Hippocampus japapigu": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.6, depth: "5-22"},
                 "Hippocampus satomiae": {label: "Not evaluated", previous: {status: "NE"}, updated: {status: "LC", year: "under review"}, habitat: "Gorgonian and soft corals", threats: ["Destructive fishing practice", "Habitat degradation"], trend: "Decreasing", size: 1.4, depth: "Unknown"},
-                "Hippocampus erectus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating sargassum, and sponges", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.5, depth: "0-100"},
-                "Hippocampus ingens": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Mangroves, macroalgae, seagrass and coral reefs", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 30, depth: "1-60"},
+                "Hippocampus erectus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "NT", year: "under review"}, habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating sargassum, and sponges", threats: [" Traditional medicine, aquarium and curios trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.5, depth: "0-100"},
+                "Hippocampus ingens": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "EN", year: "under review"}, habitat: "Mangroves, macroalgae, seagrass and coral reefs", threats: [" Traditional medicine, aquarium and curios trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 30, depth: "1-60"},
                 "Hippocampus kuda": {label: "Vulnerable", previous: {status: "VU", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, seagrass, mangroves, muddy bottoms", threats: ["Bycatch by multiple fishing gear", "Traditional medicine bycatch"], trend: "Decreasing", size: 30},
-                "Hippocampus reidi": {label: "Near Threatened", previous: {status: "NT", year: 2016}, updated: {status: "VU", year: "under review"}, habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrass, estuaries, and especially macroalgae, mangroves, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation", "Tourism activities"], trend: "Decreasing", size: 23, depth: "0-55"},
-                "Hippocampus trimaculatus": {label: "Vulnerable", previous: {status: "VU", year: 2012}, updated: {status: "EN", year: "under review"}, habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed", threats: ["Aquarium, curious and traditional medicine trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.6, depth: "10-110"},
+                "Hippocampus reidi": {label: "Near Threatened", previous: {status: "NT", year: 2016}, updated: {status: "VU", year: "under review"}, habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrass, estuaries, and especially macroalgae, mangroves, sandy and muddy bottoms, and artificial structures", threats: [" Traditional medicine, aquarium and curios trades", "Bycatch by multiple fishing gear", "Habitat degradation", "Tourism activities"], trend: "Decreasing", size: 23, depth: "0-55"},
+                "Hippocampus trimaculatus": {label: "Vulnerable", previous: {status: "VU", year: 2012}, updated: {status: "EN", year: "under review"}, habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed", threats: [" Traditional medicine, aquarium and curios trades", "Bycatch by multiple fishing gear", "Habitat degradation"], trend: "Decreasing", size: 18.6, depth: "10-110"},
                 "Hippocampus waleananus": {label: "Critically Endangered", previous: {status: "CR", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.8, depth: "5-20"},
                 "Hippocampus debelius": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 3.5, depth: " Unknown "},
                 "Hippocampus whitei": {label: "Endangered", previous: {status: "EN", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass, macroalgae, corals, sponges, and artificial structures", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 16.2, depth: "0-12"}
@@ -738,14 +738,14 @@ import Home from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Home.js";
                 <div style="margin-bottom:20px;">${getLabelBadge(data)}</div>
                 ${imageHTML}
                 <div class="info-grid">
-                    <div class="info-box" style="grid-column: 1 / span 3;"><span class="info-label">Current Assessment</span><div class="info-value"> ${getStatusBadge(data.previous)} </div></div>
-                    <div class="info-box" style="grid-column: 4 / span 3;"><span class="info-label">Updated Assessment</span><div class="info-value"> ${getStatusBadge(data.updated)} </div></div>
+                    <div class="info-box" style="grid-column: 1 / span 3;"><span class="info-label">Published Assessment</span><div class="info-value"> ${getStatusBadge(data.previous)} </div></div>
+                    <div class="info-box" style="grid-column: 4 / span 3;"><span class="info-label">Pending Assessment</span><div class="info-value"> ${getStatusBadge(data.updated)} </div></div>
                     <div class="info-box" style="grid-column: 1 / span 2;"><span class="info-label">Population Trend</span><div class="info-value" style="color: ${data.trend === 'Decreasing' ? '#ff6b6b' : data.trend === 'Stable' ? '#4ade80' : 'white'}; text-shadow: 0 0 6px rgba(255, 107, 107, 0.6); font-weight: 700;">${data.trend}</div></div>
                     <div class="info-box" style="grid-column: 3 / span 2;"><span class="info-label">Max Size</span><div class="info-value">${data.size} ${data.size !== 'Unknown' ? 'cm' : ''}</div></div>
                     <div class="info-box" style="grid-column: 5 / span 2;"><span class="info-label">Depth Range</span><div class="info-value">${data.depth} ${data.depth !== 'Unknown' ? 'm' : ''}</div></div>
                 </div>
                 <div class="section-title">Habitat</div><p class="text-body">${data.habitat}</p>
-                <div class="section-title">Major Threats</div>
+                <div class="section-title">Major Pressures</div>
                 <div style="margin-top:10px">
                     ${data.threats.map(t => `<div class="threat-item">${threatIconSVG}${t}</div>`).join('')}
                 </div>
@@ -853,7 +853,7 @@ import Home from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Home.js";
                     <div class="country-card" data-country="${stat.name}">
                         <div class="country-name" style="font-size:12px;">${stat.name}</div>
                         <div class="country-meta">
-                            <span class="count-badge">${stat.count} types</span>
+                            <span class="count-badge">${stat.count} Gear types</span>
                             <span class="card-chevron">&#10095;</span>
                         </div>
                     </div>
