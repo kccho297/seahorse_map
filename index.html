@@ -112,11 +112,36 @@
         border-radius: 12px 12px 0 0;
     }
 
-    .search-wrapper {
-        position: relative;
-        width: 100%;
-    }
+  .search-wrapper {
+    position: relative;
+width: 100%;
+    display: inline-block;
+}
 
+.tooltip-text {
+    visibility: hidden;
+    width: 250px; /* adjust */
+    background-color: rgba(0,0,0,0.8);
+    color: #fff;
+    text-align: left;
+    padding: 6px 10px;
+    border-radius: 4px;
+
+    position: absolute;
+    top: 100%; /* below the input */
+    left: 0;
+    z-index: 10;
+    font-size: 12px;
+
+    /* Optional: fade-in effect */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.search-wrapper:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
     .search-icon {
         position: absolute;
         left: 14px;
@@ -147,7 +172,7 @@
         border: 1px solid var(--panel-border);
         border-radius: 8px;
         color: white;
-        font-size: 14px;
+        font-size: 12px;
         font-family: 'Inter', sans-serif;
         outline: none;
         box-sizing: border-box;
@@ -344,7 +369,36 @@
         border-top-left-radius: 6px; backdrop-filter: blur(2px);
     }
     .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
-    .info-box { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--panel-border); border-radius: 8px; padding: 10px; }
+.info-box {
+background: rgba(255, 255, 255, 0.1);
+border: 1px solid var(--panel-border);
+border-radius: 8px;
+padding: 10px;
+position: relative; /* important */
+}
+.info-box .tooltip {
+position: absolute;
+bottom: 120%;
+left: 50%;
+transform: translateX(-50%) translateY(5px);
+
+background: rgba(0, 0, 0, 0.9);
+color: white;
+padding: 6px 10px;
+border-radius: 6px;
+
+font-size: 12px;
+white-space: nowrap;
+
+opacity: 0;
+pointer-events: none;
+transition: all 0.2s ease;
+}
+
+.info-box:hover .tooltip {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
     .info-label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: 600;  }
     .info-value { font-size: 12px; color: var(--text-main); font-weight: 400; }
     .section-title {
@@ -481,12 +535,15 @@
   <div id="legendArrow"></div>
 </div>
             <div class="sidebar-header">
-                <div class="search-wrapper">
-                    <div class="search-icon"></div>
-                    <input type="text" id="legendSearch" placeholder="Search species and status..." autocomplete="off">
-                </div>
-            </div>
-            <div id="legendItems"></div>
+    <div class="search-wrapper">
+        <div class="search-icon"></div>
+        <input type="text" id="legendSearch" placeholder="Search by name, status, region or ocean" autocomplete="off">
+        <span class="tooltip-text"> IUCN status = Least concern, EN<br>
+  Region = Asia, Europe<br>
+  Ocean = Eastern Atlantic</span>
+    </div>
+</div>
+<div id="legendItems"></div>
         </div>
     </div>
 
@@ -540,86 +597,86 @@ import Search from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Search.js";
             const seizureData = [{c:"Viet Nam",exp:243412.6,imp:617992.1,tr:80520.45},{c:"China",exp:113723,imp:1705997,tr:27881.04},{c:"Hong Kong SAR",exp:116349.1,imp:523960.5,tr:1028.535},{c:"India",exp:221765.4,imp:25118.11,tr:92852.31},{c:"Philippines",exp:215936.9,imp:96394.46,tr:21561.34},{c:"Peru",exp:1885832,imp:0,tr:443494.1},{c:"Thailand",exp:30271.61,imp:24140.37,tr:5204.461},{c:"Egypt",exp:156245.1,imp:18587.36,tr:15241.64},{c:"Indonesia",exp:113961.3,imp:557.6208,tr:0},{c:"Mozambique",exp:39464.68,imp:0,tr:3345.725},{c:"Malaysia",exp:316.4758,imp:11152.42,tr:7040},{c:"Mexico",exp:17222.09,imp:947,tr:531},{c:"Nepal",exp:15241.64,imp:0,tr:5204.461},{c:"UAE",exp:0,imp:22118.96,tr:7806.691},{c:"Panama",exp:0,imp:20000,tr:0},{c:"China (Macau)",exp:0,imp:19702.6,tr:0},{c:"France",exp:0,imp:54,tr:20952},{c:"Bolivia",exp:0,imp:0,tr:23258.33},{c:"Germany",exp:0,imp:53,tr:16248},{c:"Belgium",exp:0,imp:15,tr:13551},{c:"Netherlands",exp:0,imp:0,tr:6624.494},{c:"South Africa",exp:496.6543,imp:132,tr:7434.944}];
 
             const speciesInfo = {
-                "Hippocampus abdominalis": { status: "LC", common: "Pot-bellied seahorse", tag: "pacific oceania" },
-                "Hippocampus algiricus": { status: "VU", common: "West African seahorse", tag: "atlantic africa" },
-                "Hippocampus angustus": { status: "LC", common: "Narrow-bellied seahorse", tag: "pacific oceania"},
-                "Hippocampus barbouri": { status: "VU", common: "Barbour's seahorse", tag: "pacific asia"},
-                "Hippocampus bargibanti": { status: "LC", common: "Bargibant's seahorse", tag: "pacific asia"},
-                "Hippocampus breviceps": { status: "LC", common: "Short-head seahorse", tag: "pacific oceania"},
-                "Hippocampus camelopardalis": { status: "DD", common: "Giraffe seahorse", tag: "indian africa"},
+                "Hippocampus abdominalis": { status: "LC", common: "Pot-bellied seahorse", tag: " lc least concern western pacific oceania australia new zealand" },
+                "Hippocampus algiricus": { status: "VU", common: "West African seahorse", tag: " vulnerable vu eastern atlantic africa morroco mauritania senegal gambia guinea bissau liberia ivory coast ghana togo benin Nigeria cameroo gabon angola" },
+                "Hippocampus angustus": { status: "LC", common: "Narrow-bellied seahorse", tag: " lc least concern western pacific oceania australia"},
+                "Hippocampus barbouri": { status: "VU", common: "Barbour's seahorse", tag: " vulnerable vu pacific asia japan taiwan"},
+                "Hippocampus bargibanti": { status: "LC", common: "Bargibant's seahorse", tag: " lc least concern western pacific asia"},
+                "Hippocampus breviceps": { status: "LC", common: "Short-head seahorse", tag: " lc least concern western pacific oceania"},
+                "Hippocampus camelopardalis": { status: "DD", common: "Giraffe seahorse", tag: " data deficient dd indian africa"},
                 "Hippocampus capensis": { status: "EN", common: "Knysna seahorse"},
                 "Hippocampus casscsio": { status: "DD", common: "Casscsio’s seahorse"},
                 "Hippocampus colemani": { status: "DD", common: "Coleman's pygmy seahorse"},
                 "Hippocampus coronatus": { status: "VU", common: "Crowned seahorse"},
-                "Hippocampus dahli": { status: "LC", common: "Lowcrown seahorse", tag: "pacific oceania"},
-                "Hippocampus debelius": { status: "NT", common: "Softcoral seahorse", tag: "indian africa"},
+                "Hippocampus dahli": { status: "LC", common: "Lowcrown seahorse", tag: " lc least concern western pacific oceania"},
+                "Hippocampus debelius": { status: "NT", common: "Softcoral seahorse", tag: "western indian africa"},
                 "Hippocampus denise": { status: "LC", common: "Denise's pygmy seahorse"},
-                "Hippocampus comes": { status: "VU", common: "Tiger tail seahorse", tag: "pacific asia"},
-                "Hippocampus erectus": { status: "VU", common: "Lined seahorse", tag: "atlantic americas"},
-                "Hippocampus fisheri": { status: "LC", common: "Fisher's seahorse", tag: "pacific hawaii"},
-                "Hippocampus guttulatus": { status: "DD", common: "Long-snouted seahorse", tag: "atlantic mediterranean europe"},
-                "Hippocampus haema": { status: "VU", common: "Korean seahorse", tag: "pacific asia japan korea"},
-                "Hippocampus hippocampus": { status: "DD", common: "Short-snouted seahorse", tag: "atlantic mediterranean europe africa"},
+                "Hippocampus comes": { status: "VU", common: "Tiger tail seahorse", tag: " vulnerable vu western pacific asia"},
+                "Hippocampus erectus": { status: "VU", common: "Lined seahorse", tag: " vulnerable vu western atlantic americas"},
+                "Hippocampus fisheri": { status: "LC", common: "Fisher's seahorse", tag: " lc least concern eastern pacific oceania "},
+                "Hippocampus guttulatus": { status: "DD", common: "Long-snouted seahorse", tag: " data deficient dd eastern atlantic mediterranean europe"},
+                "Hippocampus haema": { status: "VU", common: "Korean seahorse", tag: " vulnerable vu western pacific asia"},
+                "Hippocampus hippocampus": { status: "DD", common: "Short-snouted seahorse", tag: " data deficient dd eastern atlantic mediterranean europe africa"},
                 "Hippocampus histrix": { status: "VU", common: "Thorny seahorse"},
-                "Hippocampus ingens": { status: "VU", common: "Giant seahorse", tag: "pacific americas"},
-                "Hippocampus japapigu": { status: "LC", common: "Japanese pygmy seahorse",  tag: "pacific asia japan"},
+                "Hippocampus ingens": { status: "VU", common: "Giant seahorse", tag: " vulnerable vu western pacific americas"},
+                "Hippocampus japapigu": { status: "LC", common: "Japanese pygmy seahorse",  tag: " lc least concern western pacific asia"},
                 "Hippocampus jayakari": { status: "LC", common: "Jayakar's seahorse" },
                 "Hippocampus jugumus": { status: "DD", common: "Collared seahorse"},
                 "Hippocampus kelloggi": { status: "DD", common: "Great seahorse"},
                 "Hippocampus kuda": { status: "VU", common: "Spotted seahorse"},
-                "Hippocampus minotaur": { status: "DD", common: "Bullneck seahorse",  tag: "pacific oceania asutralia"},
+                "Hippocampus minotaur": { status: "DD", common: "Bullneck seahorse",  tag: " data deficient dd western pacific oceania australia"},
                 "Hippocampus mohnikei": { status: "VU", common: "Japanese seahorse"},
-                "Hippocampus nalu": { status: "NT", common: "Sodwana pygmy seahorse", tag: "indian africa"},
-                "Hippocampus paradoxus": { status: "DD", common: "Paradoxical seahorse",  tag: "pacific oceania asutralia"},
-                "Hippocampus patagonicus": { status: "VU", common: "Patagonian seahorse",  tag: "atlantic americas"},
-                "Hippocampus planifrons": { status: "LC", common: "Flatface seahorse", tag: "pacific oceania asutralia"},
+                "Hippocampus nalu": { status: "NT", common: "Sodwana pygmy seahorse", tag: " near threatened nt western indian africa"},
+                "Hippocampus paradoxus": { status: "DD", common: "Paradoxical seahorse",  tag: " data deficient dd eastern indian oceania"},
+                "Hippocampus patagonicus": { status: "VU", common: "Patagonian seahorse",  tag: " vulnerable vu western atlantic americas"},
+                "Hippocampus planifrons": { status: "LC", common: "Flatface seahorse", tag: " lc least concern eastern indian oceania"},
                 "Hippocampus pontohi": { status: "LC", common: "Pontoh's pgymy seahorse"},
                 "Hippocampus pusillus": { status: "LC", common: "Dwarf thorny seahorse"},
-                "Hippocampus reidi": { status: "NT", common: "Long-snout seahorse", tag: "atlantic americas"},
-                "Hippocampus satomiae": { status: "NE", common: "Satomi's seahorse", tag: "pacific asia"},
+                "Hippocampus reidi": { status: "NT", common: "Long-snout seahorse", tag: " near threatened nt western atlantic americas"},
+                "Hippocampus satomiae": { status: "NE", common: "Satomi's seahorse", tag: " not evaluated ne western pacific asia"},
                 "Hippocampus sindonis": { status: "LC", common: "Sindo's seahorse" },
                 "Hippocampus spinosissimus": { status: "VU", common: "Hedgehog seahorse" },
-                "Hippocampus subelongatus": { status: "LC", common: "Western Australian seahorse", tag: "pacific oceania asutralia"  },
-                "Hippocampus trimaculatus": { status: "VU", common: "Three-spot seahorse", tag: "pacific asia"},
+                "Hippocampus subelongatus": { status: "LC", common: "Western Australian seahorse", tag: " lc least concern eastern indian oceania"  },
+                "Hippocampus trimaculatus": { status: "VU", common: "Three-spot seahorse", tag: " vulnerable vu eastern indian western pacific asia"},
                 "Hippocampus tyro": { status: "DD", common: "Tyro seahorse" },
-                "Hippocampus waleananus": { status: "CR", common: "Walea soft coral pygmy seahorse", tag: "pacific asia"},
-                "Hippocampus whitei": { status: "EN", common: "White's seahorse", tag:"pacific oceania asutralia" },
-                "Hippocampus zebra": { status: "DD", common: "Zebra seahorse", tag: "pacific oceania asutralia" },
-                "Hippocampus zosterae": { status: "LC", common: "Dwarf seahorse", tag: "atlantic americas" }
+                "Hippocampus waleananus": { status: "CR", common: "Walea soft coral pygmy seahorse", tag: " critically endangered cr western pacific asia"},
+                "Hippocampus whitei": { status: "EN", common: "White's seahorse", tag:" endangered en western pacific oceania australia" },
+                "Hippocampus zebra": { status: "DD", common: "Zebra seahorse", tag: " data deficient dd eastern indian western pacific oceania australia" },
+                "Hippocampus zosterae": { status: "LC", common: "Dwarf seahorse", tag: " lc least concern western atlantic americas" }
             };
 
             const speciesDatabase = {
                 "Hippocampus algiricus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "under view"}, habitat: "Coastal areas with silt, mud, gravel, sand, seagrass, macroalgae, coral reefs and estuaries", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation", " Traditional medicine trade"], trend: "Decreasing", size: 22, depth: "0-25"},
-                "Hippocampus nalu": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Sandy, sandstone-based coral reefs", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.2, depth: "12-17"},
-                "Hippocampus fisheri": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Pelagic waters", threats: ["Coastal development", "Water pollution"], trend: "Stable", size: 8, depth: "0-110"},
+                "Hippocampus nalu": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "In progress"}, habitat: "Sandy, sandstone-based coral reefs", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.2, depth: "12-17"},
+                "Hippocampus fisheri": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Pelagic waters", threats: ["Coastal development", "Water pollution"], trend: "Stable", size: 8, depth: "0-110"},
                 "Hippocampus patagonicus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "under review"}, habitat: "Algae, seagrass, artificial structures, sessile invertebrates and estuaries", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation", "Water pollution"], trend: "Decreasing", size: 15.5, depth: "0-120"},
-                "Hippocampus zosterae": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass bed and submerged vegetation", threats: ["Habitat degradation", "Aquarium and curios trades"], trend: "Stable", size: 5.4, depth: "nknown"},
+                "Hippocampus zosterae": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Seagrass bed and submerged vegetation", threats: ["Habitat degradation", "Aquarium and curios trades"], trend: "Stable", size: 5.4, depth: "nknown"},
                 "Hippocampus guttulatus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "NT", year: "awaiting publication"}, habitat: "Coastal lagoons, estuaries, seagrass meadows, macroalgae, rock reefs, artificial structures", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 18, depth: "0-30"},
                 "Hippocampus hippocampus": {label: "Data Deficient", previous: {status: "DD", year: 2017}, updated: {status: "LC", year: "awaiting publication"}, habitat: "Soft sediment, rocky bottoms, seagrass meadows, macroalgae, artificial structures, lagoons and estuaries", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 15, depth: "0-60"},
-                "Hippocampus abdominalis": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Coastal waters, harbors, rocky reefs, macroalgal bed, loose gravel, seagrass and artificial structures", threats: ["Bycatch by multiple fishing gears", "Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 35, depth: "0-104"},
-                "Hippocampus angustus": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Soft bottom substrate, coral reefs", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Stable", size: 16, depth: "0-63"},
-                "Hippocampus breviceps": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Macroalgal beds, seagrass, coral and rocky reefs, and estuaries", threats: ["Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 10, depth: "0-15"},
-                "Hippocampus dahli": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Estuary channels, gravel and soft substrates", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Stable", size: 14, depth: "Unknown"},
-                "Hippocampus minotaur": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Sandy and hard bottoms, and soft corals", threats: ["Bottom bycatch", "Habitat degradation"], trend: "Unknown", size: 5, depth: "64-110"},
-                "Hippocampus paradoxus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Shell benthos, sand with sponges and bryozoans", threats: ["Targeted and bycatch by multiple fishing gears"], trend: "Unknown", size: 6.5, depth: "94-110"},
-                "Hippocampus planifrons": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "N/A"}, habitat: "Rock pools, shallow algae, and weedy or rubble reefs", threats: ["Habitat degradation"], trend: "Stable", size: 11.6, depth: "0-20"},
-                "Hippocampus subelongatus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "N/A"}, habitat: "Rocky reefs, seagrass beds, estuaries, macroalgae, and artificial structures", threats: ["Habitat degradation"], trend: "Stable", size: 20, depth: "0-25"},
+                "Hippocampus abdominalis": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Coastal waters, harbors, rocky reefs, macroalgal bed, loose gravel, seagrass and artificial structures", threats: ["Bycatch by multiple fishing gears", "Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 35, depth: "0-104"},
+                "Hippocampus angustus": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Soft bottom substrate, coral reefs", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Stable", size: 16, depth: "0-63"},
+                "Hippocampus breviceps": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Macroalgal beds, seagrass, coral and rocky reefs, and estuaries", threats: ["Habitat degradation", "Harmful algal bloom"], trend: "Stable", size: 10, depth: "0-15"},
+                "Hippocampus dahli": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Estuary channels, gravel and soft substrates", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Stable", size: 14, depth: "Unknown"},
+                "Hippocampus minotaur": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "In progress"}, habitat: "Sandy and hard bottoms, and soft corals", threats: ["Bottom bycatch", "Habitat degradation"], trend: "Unknown", size: 5, depth: "64-110"},
+                "Hippocampus paradoxus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "In progress"}, habitat: "Shell benthos, sand with sponges and bryozoans", threats: ["Targeted and bycatch by multiple fishing gears"], trend: "Unknown", size: 6.5, depth: "94-110"},
+                "Hippocampus planifrons": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Rock pools, shallow algae, and weedy or rubble reefs", threats: ["Habitat degradation"], trend: "Stable", size: 11.6, depth: "0-20"},
+                "Hippocampus subelongatus": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "In progress"}, habitat: "Rocky reefs, seagrass beds, estuaries, macroalgae, and artificial structures", threats: ["Habitat degradation"], trend: "Stable", size: 20, depth: "0-25"},
                 "Hippocampus zebra": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "under review"}, habitat: "Soft bottoms, black corals, and gorgonians", threats: ["Targeted catch by multiple fishing gears", "Habitat degradation"], trend: "Stable", size: 9, depth: "0-20"},
-                "Hippocampus bargibanti": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Coral reefs, specifically on muricella gorgonian sea fans", threats: ["Climate change", "Habitat degradation (Coral reef destruction)", "Tourism activities"], trend: "Decreasing", size: 2.4, depth: "4-40"},
+                "Hippocampus bargibanti": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "In progress"}, habitat: "Coral reefs, specifically on muricella gorgonian sea fans", threats: ["Climate change", "Habitat degradation (Coral reef destruction)", "Tourism activities"], trend: "Decreasing", size: 2.4, depth: "4-40"},
                 "Hippocampus capensis": {label: "Endangered", previous: {status: "EN", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, submerged vegetation like zostera and ruppia", threats: ["Coastal development", "Water pollution"], trend: "Decreasing", size: 12},
                 "Hippocampus comes": {label: "Vulnerable", previous: {status: "VU", year: 2013}, updated: {status: "EN", year: "awaiting publication"}, habitat: "Coral reefs, sponge gardens, macroalgal beds, seagrass, rocky reefs, sandy and muddy bottoms, and artificial structures", threats: ["Aquarium trade", "Targeted and bycatch by multiple fishing gears", "Habitat degradation", "Traditional medicine trade"], trend: "Decreasing", size: 18.7, depth: "0-20"},
-                "Hippocampus denise": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Gorgonian corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.4, depth: "13-102"},
-                "Hippocampus haema": {label: "Vulnerable", previous: {status: "VU", year: 2023}, updated: {status: "N/A"}, habitat: "Seagrass and seaweed", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 10, depth: "0-18"},
-                "Hippocampus japapigu": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.6, depth: "5-22"},
+                "Hippocampus denise": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "In progress"}, habitat: "Gorgonian corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 2.4, depth: "13-102"},
+                "Hippocampus haema": {label: "Vulnerable", previous: {status: "VU", year: 2023}, updated: {status: "In progress"}, habitat: "Seagrass and seaweed", threats: ["Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 10, depth: "0-18"},
+                "Hippocampus japapigu": {label: "Least Concern", previous: {status: "LC", year: 2023}, updated: {status: "In progress"}, habitat: "Soft corals, coralline algae, Halimeda spp. and hydroids", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.6, depth: "5-22"},
                 "Hippocampus satomiae": {label: "Not evaluated", previous: {status: "NE"}, updated: {status: "under review"}, habitat: "Gorgonian and soft corals", threats: ["Destructive fishing practice", "Habitat degradation"], trend: "Decreasing", size: 1.4, depth: "Unknown"},
                 "Hippocampus erectus": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "under review"}, habitat: "Mangroves, coral, rocky and oyster reef habitats, macroalga, sandy bottoms, artificial structures, floating sargassum, and sponges", threats: [" Traditional medicine, aquarium and curios trades", "Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 18.5, depth: "0-100"},
                 "Hippocampus ingens": {label: "Vulnerable", previous: {status: "VU", year: 2016}, updated: {status: "under review"}, habitat: "Mangroves, macroalgae, seagrass and coral reefs", threats: [" Traditional medicine, aquarium and curios trades", "Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 30, depth: "1-60"},
                 "Hippocampus kuda": {label: "Vulnerable", previous: {status: "VU", year: 2017}, updated: {status: "under review"}, habitat: "Estuaries, seagrass, mangroves, muddy bottoms", threats: ["Targeted and bycatch by multiple fishing gears", "Traditional medicine bycatch"], trend: "Decreasing", size: 30},
                 "Hippocampus reidi": {label: "Near Threatened", previous: {status: "NT", year: 2016}, updated: {status: "under review"}, habitat: "Bryozoans, oysters, sponges, and tunicates, gorgonian corals, seagrass, estuaries, and especially macroalgae, mangroves, sandy and muddy bottoms, and artificial structures", threats: [" Traditional medicine, aquarium and curios trades", "Targeted and bycatch by multiple fishing gears", "Habitat degradation", "Tourism activities"], trend: "Decreasing", size: 23, depth: "0-55"},
                 "Hippocampus trimaculatus": {label: "Vulnerable", previous: {status: "VU", year: 2012}, updated: {status: "EN", year: "awaiting publication"}, habitat: "Gravel and sand bottoms, octocorals, macroalgae, sponges and seagrass bed", threats: [" Traditional medicine, aquarium and curios trades", "Targeted and bycatch by multiple fishing gears", "Habitat degradation"], trend: "Decreasing", size: 18.6, depth: "10-110"},
-                "Hippocampus waleananus": {label: "Critically Endangered", previous: {status: "CR", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.8, depth: "5-20"},
-                "Hippocampus debelius": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "N/A"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 3.5, depth: " Unknown "},
-                "Hippocampus whitei": {label: "Endangered", previous: {status: "EN", year: 2016}, updated: {status: "N/A"}, habitat: "Seagrass, macroalgae, corals, sponges, and artificial structures", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 16.2, depth: "0-12"}
+                "Hippocampus waleananus": {label: "Critically Endangered", previous: {status: "CR", year: 2023}, updated: {status: "In progress"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 1.8, depth: "5-20"},
+                "Hippocampus debelius": {label: "Near Threatened", previous: {status: "NT", year: 2023}, updated: {status: "In progress"}, habitat: "Soft corals", threats: ["Habitat degradation"], trend: "Decreasing", size: 3.5, depth: " Unknown "},
+                "Hippocampus whitei": {label: "Endangered", previous: {status: "EN", year: 2016}, updated: {status: "In progress"}, habitat: "Seagrass, macroalgae, corals, sponges, and artificial structures", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 16.2, depth: "0-12"}
             };
 
             const habitatDatabase = {
@@ -749,7 +806,7 @@ view.when(() => {
                     <div class="info-box" style="grid-column: 1 / span 3;"><span class="info-label">Published Assessment</span><div class="info-value"> ${getStatusBadge(data.previous)} </div></div>
                     <div class="info-box" style="grid-column: 4 / span 3;"><span class="info-label">Pending Assessment</span><div class="info-value"> ${getStatusBadge(data.updated)} </div></div>
                     <div class="info-box" style="grid-column: 1 / span 2;"><span class="info-label">Population Trend</span><div class="info-value" style="color: ${data.trend === 'Decreasing' ? '#ff6b6b' : data.trend === 'Stable' ? '#4ade80' : 'white'}; text-shadow: 0 0 6px rgba(255, 107, 107, 0.6); font-weight: 700;">${data.trend}</div></div>
-                    <div class="info-box" style="grid-column: 3 / span 2;"><span class="info-label">Max Height</span><div class="info-value">${data.size} ${data.size !== 'Unknown' ? 'cm' : ''}</div></div>
+                    <div class="info-box" style="grid-column: 3 / span 2;"><span class="info-label">Max Height</span><div class="info-value">${data.size} ${data.size !== 'Unknown' ? 'cm' : ''}</div> <div class="tooltip">Height = Top of coronet to tail tip</div></div>
                     <div class="info-box" style="grid-column: 5 / span 2;"><span class="info-label">Depth Range</span><div class="info-value">${data.depth} ${data.depth !== 'Unknown' ? 'm' : ''}</div></div>
                 </div>
                 <div class="section-title">Habitat</div><p class="text-body">${data.habitat}</p>
@@ -1215,8 +1272,13 @@ style="width:14px; height:14px; filter:invert(1);">
                         const subContainer = item.nextElementSibling;
                         if (!label) return false;
                         const text = label.textContent;
-                        let selfMatch = text.toLowerCase().includes(query);
-                        let childMatch = false;
+                        function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+const safeQuery = escapeRegex(query);
+const regex = new RegExp("\\b" + safeQuery, "i");
+let selfMatch = regex.test(text);               
+         let childMatch = false;
                         if (subContainer && subContainer.classList.contains("sublayer-container")) {
                             Array.from(subContainer.children).forEach(subItem => {
                                 if (subItem.classList.contains("legend-item")) {
@@ -1231,7 +1293,9 @@ style="width:14px; height:14px; filter:invert(1);">
                     Array.from(document.querySelectorAll("#legendItems > .legend-item")).forEach(searchItem);
                 });
 
-            }); // End view.when
+            }); 
+
+// End view.when
 const legendSidebar = document.getElementById("legendSidebar");
 const legendCollapseBtn = document.getElementById("legendCollapseBtn");
 
