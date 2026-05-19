@@ -352,6 +352,10 @@ width: 100%;
     /* This creates the glow around the OUTSIDE of the container */
     box-shadow: 0 0 10px var(--accent-gold);
 }
+.habitat-image-container:hover {
+border-color: var(--panel-border) !important;
+box-shadow: none !important;
+}
 
 /* 3. Keep the image contained and simple */
 .species-image { 
@@ -600,6 +604,7 @@ import Search from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Search.js";
 "Hippocampus casscsio": { iucnLink: "https://www.iucnredlist.org/species/112664105/112664119"},
 "Hippocampus colemani": { url: "https://inaturalist-open-data.s3.amazonaws.com/photos/509587195/large.jpg", iucnLink: "https://www.iucnredlist.org/species/47728602/47736420", attribution: "Caron Wong - GuyLian Seahorses of the World 2018 / iNaturalist"},
 "Hippocampus coronatus": { url: "https://static.inaturalist.org/photos/49835380/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10065/54904583", attribution: "mikejdo / iNaturalist"},
+"Hippocampus sindonis": { url: "https://inaturalist-open-data.s3.amazonaws.com/photos/566747029/large.jpg", iucnLink: "https://www.iucnredlist.org/species/10083/54906192", attribution: "circle-a / iNaturalist"}
 
             };
 
@@ -693,7 +698,7 @@ import Search from "https://js.arcgis.com/4.33/@arcgis/core/widgets/Search.js";
 "Hippocampus barbouri": {label: "Vulnerable", previous: {status: "VU", year: 2017}, updated: {status: "In progress"}, habitat: "Seagrass and coral reefs", threats: ["Traditional medicine and aquarium trades", "Bycatch by multiple fishing gears", "Coastal development", "Habitat degradation"], trend: "Decreasing", size: 15, depth: "0-10"},
 "Hippocampus casscsio": {label: "Data Deficient", previous: {status: "DD", year: 2017}, updated: {status: "In progress"}, habitat: "Seagrass", threats: ["Bycatch by multiple fishing gears", "Coastal development", "Habitat degradation"], trend: "Decreasing", size: 13, depth: "0-15"},
 "Hippocampus colemani": {label: "Data Deficient", previous: {status: "DD", year: 2016}, updated: {status: "In progress"}, habitat: "Seagrass and macroalgae", threats: ["Coastal development", "Habitat degradation"], trend: "Decreasing", size: 2.7, depth: "0-12"},
-"Hippocampus coronatus": {label: "Data Deficient", previous: {status: "DD", year: 2015}, updated: {status: "In progress"}, habitat: "Seagrass and macroalgae ", threats: ["Traditional medicine and aquarium trades", "Bycatch by multiple fishing gears", "Coastal development", "Habitat degradation"], trend: "Decreasing", size: 13, depth: "0-20"},
+"Hippocampus coronatus": {label: "Data Deficient", previous: {status: "DD", year: 2015}, updated: {status: "In progress"}, habitat: "Seagrass and macroalgae", threats: ["Traditional medicine and aquarium trades", "Bycatch by multiple fishing gears", "Coastal development", "Habitat degradation"], trend: "Decreasing", size: 13, depth: "0-20"},
 "Hippocampus sindonis": {label: "Least Concern", previous: {status: "LC", year: 2016}, updated: {status: "In progress"}, habitat: "Seagrass, algae, corals, and soft bottoms", threats: ["Bycatch by multiple fishing gears", "Coastal development", "Habitat degradation"], trend: "Stable", size: 11, depth: "0-30"}
 
             };
@@ -791,7 +796,7 @@ view.when(() => {
                 header.innerHTML = `<h2 class="detail-title">${habitatName}</h2><p class="detail-subtitle">Essential Seahorse Habitat</p>`;
                 
                 body.innerHTML = `
-                    <div class="species-image-container">
+                    <div class="species-image-container habitat-image-container">
                         <img src="${data.image}" class="species-image loaded" alt="${habitatName}">
                     </div>
                     <div class="section-title">Ecological Importance</div>
@@ -1043,21 +1048,26 @@ style="width:14px; height:14px; filter:invert(1);">
                         const customSymbols = {
                             "Exporter": "#24a8e0", "Transit": "#fbff0a", "Importer": "#e64c4f",
                             "Coral reefs": "#e64e4e", "Seagrass": "#4ccd75", "Mangroves": "#736e1c",
-                            "Hippocampus abdominalis": "#e64e4e", "Hippocampus algiricus": "#4c81cd",
+ "Hippocampus barbouri": "#ecffe3",  "Hippocampus angustus": "#bf3f8a",  "Hippocampus abdominalis": "#005799",  "Hippocampus algiricus": "#4c81cd",   "Hippocampus casscsio": "#1aedaa",
+"Hippocampus colemani": "#ff0f4b",   "Hippocampus coronatus": "#fff538",
                             "Hippocampus breviceps": "#4c81cd", "Hippocampus minotaur": "#f68efa",
                             "Hippocampus paradoxus": "#cdbb4c", "Hippocampus subelongatus": "#a0d180",
-                            "Hippocampus whitei": "#4ccd75", "Hippocampus debelius": "#eb7a7c",
-                            "Hippocampus comes": "#8e6dda", "Hippocampus haema": "#ec7a78",
-                            "Hippocampus japapigu": "#c970a7", "Hippocampus satomiae": "#7b9ee1",
-                            "Hippocampus trimaculatus": "#69a880", "Hippocampus waleananus": "#fc7e43",
-                            "Hippocampus nalu": "#79d998", "Hippocampus hippocampus": "#eb7e79",
-                            "Hippocampus guttulatus": "#fdea7e", "Hippocampus angustus": "#8f518e",
-                            "Hippocampus dahli": "#d67b42", "Hippocampus planifrons": "#cfc9cc",
-                            "Hippocampus zebra": "#d09e5a", "Hippocampus bargibanti": "#98d7e9",
-                            "Hippocampus erectus": "#8d71ae", "Hippocampus fisheri": "#74a2dd",
-                            "Hippocampus ingens": "#ed7a7d", "Hippocampus patagonicus": "#94dbde",
-                            "Hippocampus reidi": "#88cf99", "Hippocampus zosterae": "#4e8fd3",
-                            "Hippocampus denise": "#fcec7d", "Reported catch jurisdictions": "#a8a8a8",
+                            "Hippocampus whitei": "#4ccd75", "Hippocampus debelius": "#e64e4e",
+                            "Hippocampus comes": "#8e6dda", "Hippocampus haema": "#e64e4e",
+                            "Hippocampus japapigu": "#c970a7", "Hippocampus satomiae": "#4c81cd",
+                            "Hippocampus trimaculatus": "#69a880", "Hippocampus waleananus": "#ff0000",
+                            "Hippocampus nalu": "#4ccd75", "Hippocampus hippocampus": "#e64e4e",
+                            "Hippocampus guttulatus": "#fce549", "Hippocampus angustus": "#8f518e",
+                            "Hippocampus dahli": "#fa6b11", "Hippocampus planifrons": "#ffd5c7",
+                            "Hippocampus zebra": "#8d9496", "Hippocampus bargibanti": "#6fced9",
+                            "Hippocampus erectus": "#a55ea2", "Hippocampus fisheri": "#4c81cd",
+                            "Hippocampus ingens": "#e64e4e", "Hippocampus patagonicus": "#6fced9",
+                            "Hippocampus reidi": "#4ccd75", "Hippocampus zosterae": "#4c81cd",
+                            "Hippocampus denise": "#11d7fa", "Hippocampus mohnikei": "#0091ff",
+"Hippocampus pontonhi": "#fce549",  "Hippocampus mohnikei": "#a456db",
+"Hippocampus sindonis": "#a6ff00", "Hippocampus japapigu": "#bf3f8a",
+"Hippocampus spinosissimus": "#ff17d8", "Hippocampus trimaculatus": "#4ccd75",
+"Hippocampus kelloggi": "#fadc8e", "Reported catch jurisdictions": "#a8a8a8",
                             "Seahorse seizures": "#a8a8a8"
                         };
                         const color = customSymbols[layer.title] || "#ccc";
@@ -1065,12 +1075,19 @@ style="width:14px; height:14px; filter:invert(1);">
                         else symbol.style.backgroundColor = color;
 
                         if (layer.title === "Reported catch jurisdictions") {
-                            layer.opacity = 0.6;
-                            layer.visible = true;
-                        } else if (layer.title !== "Ocean Basemap" && layer.title !== "World Hillshade" && layer.title !== "Seahorse seizures") {
-                            layer.visible = false;
-                        }
-                    } else {
+    layer.opacity = 0.6;
+    layer.visible = true;
+} else if (
+    layer.title.startsWith("Hippocampus")
+) {
+    layer.visible = true;
+} else if (
+    layer.title !== "Ocean Basemap" &&
+    layer.title !== "World Hillshade" &&
+    layer.title !== "Seahorse seizures"
+) {
+    layer.visible = false;
+}                    } else {
                         symbol.style.display = 'none';
                     }
 
