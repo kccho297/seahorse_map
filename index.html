@@ -1526,11 +1526,19 @@ view.when().then(() => {
             `;
             
             filterBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                filterPanel.classList.toggle("active");
-                filterBtn.classList.toggle("active");
-            });
-            
+  e.stopPropagation();
+  const isActive = filterPanel.classList.toggle("active");
+  filterBtn.classList.toggle("active");
+
+  // Reset filters when the funnel is unclicked
+  if (!isActive) {
+    const cDrop = document.getElementById("countryDropdown");
+    const sDrop = document.getElementById("statusDropdown");
+    if (cDrop) cDrop.value = "";
+    if (sDrop) sDrop.value = "";
+    if (typeof applyFilters === "function") applyFilters();
+  }
+});            
             // CRITICAL FIX: Stops clicks inside the dropdown panel from collapsing the group layer!
             filterPanel.addEventListener("click", (e) => e.stopPropagation());
             
@@ -1545,10 +1553,29 @@ view.when().then(() => {
                     Object.values(speciesCountryDatabase).forEach(list => list.forEach(c => cSet.add(c)));
                     [...cSet].sort().forEach(c => cDrop.add(new Option(c, c)));
                     
-                    const sSet = new Set();
-                    Object.values(speciesInfo).forEach(info => { if(info.status) sSet.add(info.status); });
-                    [...sSet].sort().forEach(s => sDrop.add(new Option(s, s)));
-                    
+const statusMap = {
+  "CR": "Critically Endangered",
+  "EN": "Endangered",
+  "VU": "Vulnerable",
+  "NT": "Near Threatened",
+  "LC": "Least Concern",
+  "DD": "Data Deficient",
+  "NE": "Not Evaluated"
+};
+
+// Define the preferred order
+const statusOrder = ["CR", "EN", "VU", "NT", "LC", "DD", "NE"];
+
+const sSet = new Set();
+Object.values(speciesInfo).forEach(info => { if(info.status) sSet.add(info.status); });
+
+// Convert to array and sort based on the statusOrder index
+[...sSet].sort((a, b) => {
+  return statusOrder.indexOf(a) - statusOrder.indexOf(b);
+}).forEach(s => {
+  const fullName = statusMap[s] || s;
+  sDrop.add(new Option(fullName, s));
+});
                     cDrop.addEventListener("change", applyFilters);
                     sDrop.addEventListener("change", applyFilters);
                 }
